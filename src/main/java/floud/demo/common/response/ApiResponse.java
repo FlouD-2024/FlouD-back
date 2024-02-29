@@ -1,6 +1,8 @@
 package floud.demo.common.response;
 
 import floud.demo.common.Success;
+import floud.demo.common.Error;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
@@ -42,6 +44,39 @@ public class ApiResponse<T> {
         return new ApiResponse<>(
                 Success.SUCCESS.getHttpStatusCode(),
                 Success.SUCCESS.getMessage(),
+                data
+        );
+    }
+
+
+    public static <T> ApiResponse<T> failure(Error error) {
+        return new ApiResponse<>(
+                error.getHttpStatusCode(),
+                error.getMessage(),
+                null
+        );
+    }
+
+    public static <T> ApiResponse<T> failure(Error error, String message) {
+        return new ApiResponse<>(
+                error.getHttpStatusCode(),
+                message,
+                null
+        );
+    }
+
+    public static <T> ApiResponse<T> failure(Error error, T data) {
+        return new ApiResponse<>(
+                error.getHttpStatusCode(),
+                error.getMessage(),
+                data
+        );
+    }
+
+    public static <T> ApiResponse<T> failure(T data) {
+        return new ApiResponse<>(
+                Error.ERROR.getHttpStatusCode(),
+                Error.ERROR.getMessage(),
                 data
         );
     }
