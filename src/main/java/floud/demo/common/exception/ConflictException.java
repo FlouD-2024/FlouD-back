@@ -7,6 +7,6 @@ import static org.springframework.http.HttpStatus.CONFLICT;
 @ResponseStatus(CONFLICT)
 public abstract class ConflictException extends ApiException {
     public ConflictException(final String message) {
-        super(message, CONFLICT);
+        super(CONFLICT, message);
     }
 }

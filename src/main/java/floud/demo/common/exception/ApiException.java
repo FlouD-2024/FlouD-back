@@ -4,7 +4,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 public abstract class ApiException extends ResponseStatusException {
-    public ApiException(final String message, final HttpStatus status) {
-        super(status, message);
+    private final boolean success;
+    public ApiException(final HttpStatus code, final String message) {
+        super(code, message);
+        this.success = false;
+    }
+
+    public boolean isSuccess() {
+        return success;
     }
 }

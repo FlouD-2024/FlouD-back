@@ -7,6 +7,6 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 @ResponseStatus(INTERNAL_SERVER_ERROR)
 public abstract class InternalServerErrorException extends ApiException{
     public InternalServerErrorException (final String message) {
-        super(message, INTERNAL_SERVER_ERROR);
+        super(INTERNAL_SERVER_ERROR, message);
     }
 }
