@@ -1,4 +1,4 @@
-package floud.demo.common;
+package floud.demo.common.response;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -7,14 +7,12 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public enum Error {
+public enum Success {
     // Default
-    ERROR(HttpStatus.BAD_REQUEST, "Request processing failed"),
+    SUCCESS(HttpStatus.OK, "Request successfully processed"),
 
-
-    // 500 INTERNAL SERVER ERROR
-    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error"),
     ;
+
 
     private final HttpStatus httpStatus;
     private final String message;

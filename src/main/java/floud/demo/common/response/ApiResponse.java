@@ -1,8 +1,5 @@
 package floud.demo.common.response;
 
-import floud.demo.common.Success;
-import floud.demo.common.Error;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
