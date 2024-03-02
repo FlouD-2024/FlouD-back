@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("api/memoir")
 public class MemoirController {
-    final private MemoirService memoirService;
+    private final MemoirService memoirService;
     @PostMapping
     public ApiResponse<?> createMemoir(@RequestBody MemoirCreateRequestDto memoirCreateRequestDto){
         return memoirService.createMemoir(memoirCreateRequestDto);
