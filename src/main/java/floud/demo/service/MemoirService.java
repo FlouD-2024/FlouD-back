@@ -68,11 +68,21 @@ public class MemoirService {
     }
 
     @Transactional
-    public ApiResponse<?> getOneMemoir(Long memoir_id){
-        //Checking memoir
-        Optional<Memoir> optionalMemoir = memoirRepository.findById(memoir_id);
+    public ApiResponse<?> getOneMemoir(LocalDateTime dateTime){
+        //Checking user
+        Optional<Users> users = usersRepository.findById(1L);
+        if(users.isEmpty())
+            return ApiResponse.failure(Error.USERS_NOT_FOUND);
+        log.info("유저 이름 -> {}", users.get().getNickname());
+
+        //Check whether user posts today's memoir
+        LocalDateTime startTime = dateTime.truncatedTo(ChronoUnit.DAYS);
+        LocalDateTime endTime = startTime.plusDays(1);
+        Optional<Memoir> optionalMemoir = memoirRepository.findByCreatedAt(users.get().getId(), startTime, endTime);
+
         if(optionalMemoir.isEmpty())
             return ApiResponse.failure(Error.MEMOIR_NOT_FOUND);
+
         Memoir memoir = optionalMemoir.get();
 
         OneMemoirResponseDto responseDto = OneMemoirResponseDto.builder()
@@ -85,7 +95,7 @@ public class MemoirService {
                 .created_at(memoir.getCreated_at())
                 .build();
 
-        return  ApiResponse.success(Success.ONE_MEMOIR_GET_SUCCESS, responseDto);
+        return  ApiResponse.success(Success.GET_MY_MEMOIR_SUCCESS, responseDto);
 
     }
 

@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface MemoirRepository  extends JpaRepository<Memoir, Long> {
 
@@ -16,6 +17,10 @@ public interface MemoirRepository  extends JpaRepository<Memoir, Long> {
             "END FROM Memoir m WHERE m.users_id = :users_id " +
             "AND m.created_at BETWEEN :startTime AND :endTime", nativeQuery = true)
     boolean existsByUserAndCreatedAtBetween(Long users_id, LocalDateTime startTime ,LocalDateTime endTime);
+
+    @Query(value = "SELECT * FROM Memoir m WHERE m.users_id = :users_id " +
+            "AND m.created_at BETWEEN :startTime AND :endTime", nativeQuery = true)
+    Optional<Memoir> findByCreatedAt(Long users_id, LocalDateTime startTime , LocalDateTime endTime);
 
 
 }

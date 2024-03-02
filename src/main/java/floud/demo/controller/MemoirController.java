@@ -24,9 +24,9 @@ public class MemoirController {
         return memoirService.updateMemoir(memoir_id, memoirUpdateRequestDto);
     }
 
-    @GetMapping("/{memoir_id}")
-    public ApiResponse<?> getOneMemoir(@PathVariable Long memoir_id){
-        return memoirService.getOneMemoir(memoir_id);
+    @GetMapping("/my")
+    public ApiResponse<?> getOneMemoir(@RequestParam(name = "date") LocalDateTime dateTime){
+        return memoirService.getOneMemoir(dateTime);
     }
 
     @GetMapping("/week")
