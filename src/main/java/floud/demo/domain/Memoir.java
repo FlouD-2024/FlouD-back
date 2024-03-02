@@ -40,4 +40,11 @@ public class Memoir extends BaseTimeEntity {
         this.try_memoir = try_memoir;
         this.users = users;
     }
+
+    public void update(String title, String keep_memoir, String problem_memoir, String try_memoir){
+        this.title = title;
+        this.keep_memoir = keep_memoir;
+        this.problem_memoir = problem_memoir;
+        this.try_memoir = try_memoir;
+    }
 }
