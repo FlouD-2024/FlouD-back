@@ -11,6 +11,8 @@ public enum Success {
     // Default
     SUCCESS(HttpStatus.OK, "Request successfully processed"),
 
+    //201 CREATED SUCCESS
+    MEMOIR_CREATE_SUCCESS(HttpStatus.CREATED, "성공적으로 회고를 등록하였습니다."),
     ;
 
 
