@@ -7,6 +7,8 @@ import floud.demo.service.MemoirService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("api/memoir")
@@ -20,5 +22,10 @@ public class MemoirController {
     @PutMapping("/{memoir_id}")
     public ApiResponse<?> updateMemoir(@PathVariable Long memoir_id, @RequestBody MemoirUpdateRequestDto memoirUpdateRequestDto){
         return memoirService.updateMemoir(memoir_id, memoirUpdateRequestDto);
+    }
+
+    @GetMapping("/{memoir_id}")
+    public ApiResponse<?> getOneMemoir(@PathVariable Long memoir_id){
+        return memoirService.getOneMemoir(memoir_id);
     }
 }

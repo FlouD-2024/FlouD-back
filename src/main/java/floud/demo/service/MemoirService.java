@@ -7,6 +7,7 @@ import floud.demo.domain.Memoir;
 import floud.demo.domain.Users;
 import floud.demo.dto.memoir.MemoirCreateRequestDto;
 import floud.demo.dto.memoir.MemoirUpdateRequestDto;
+import floud.demo.dto.memoir.OneMemoirResponseDto;
 import floud.demo.repository.MemoirRepository;
 import floud.demo.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
@@ -55,5 +56,25 @@ public class MemoirService {
         memoir.update(memoirUpdateRequestDto);
 
         return  ApiResponse.success(Success.MEMOIR_UPDATE_SUCCESS, Map.of("memoir_id", memoir.getId()));
+    }
+
+    @Transactional
+    public ApiResponse<?> getOneMemoir(Long memoir_id){
+        //Checking memoir
+        Optional<Memoir> optionalMemoir = memoirRepository.findById(memoir_id);
+        if(optionalMemoir.isEmpty())
+            return ApiResponse.failure(Error.MEMOIR_NOT_FOUND);
+        Memoir memoir = optionalMemoir.get();
+
+        OneMemoirResponseDto responseDto = OneMemoirResponseDto.builder()
+                .nickname(memoir.getUsers().getNickname())
+                .title(memoir.getTitle())
+                .keep_memoir(memoir.getKeep_memoir())
+                .problem_memoir(memoir.getProblem_memoir())
+                .try_memoir(memoir.getTry_memoir())
+                .build();
+
+        return  ApiResponse.success(Success.ONE_MEMOIR_GET_SUCCESS, responseDto);
+
     }
 }
