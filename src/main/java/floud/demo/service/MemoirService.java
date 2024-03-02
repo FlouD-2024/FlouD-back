@@ -69,10 +69,12 @@ public class MemoirService {
 
         OneMemoirResponseDto responseDto = OneMemoirResponseDto.builder()
                 .nickname(memoir.getUsers().getNickname())
+                .memoir_id(memoir.getId())
                 .title(memoir.getTitle())
                 .keep_memoir(memoir.getKeep_memoir())
                 .problem_memoir(memoir.getProblem_memoir())
                 .try_memoir(memoir.getTry_memoir())
+                .created_at(memoir.getCreated_at())
                 .build();
 
         return  ApiResponse.success(Success.ONE_MEMOIR_GET_SUCCESS, responseDto);

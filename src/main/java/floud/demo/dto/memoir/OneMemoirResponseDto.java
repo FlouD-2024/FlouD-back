@@ -3,6 +3,8 @@ package floud.demo.dto.memoir;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Builder
 public class OneMemoirResponseDto {
@@ -12,4 +14,5 @@ public class OneMemoirResponseDto {
     private String keep_memoir;
     private String problem_memoir;
     private String try_memoir;
+    private LocalDateTime created_at;
 }
