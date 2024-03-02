@@ -28,4 +28,9 @@ public class MemoirController {
     public ApiResponse<?> getOneMemoir(@PathVariable Long memoir_id){
         return memoirService.getOneMemoir(memoir_id);
     }
+
+    @GetMapping("/week")
+    public ApiResponse<?> getThisWeekMemoir(@RequestParam(name = "start-date") LocalDateTime startDate){
+        return memoirService.getThisWeekMemoir(startDate);
+    }
 }

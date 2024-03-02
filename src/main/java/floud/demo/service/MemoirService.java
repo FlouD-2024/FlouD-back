@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
 
@@ -75,6 +76,19 @@ public class MemoirService {
                 .build();
 
         return  ApiResponse.success(Success.ONE_MEMOIR_GET_SUCCESS, responseDto);
+
+    }
+
+    @Transactional
+    public ApiResponse<?> getThisWeekMemoir(LocalDateTime startDate){
+        //Checking user
+        Optional<Users> users = usersRepository.findById(1L);
+        if(users.isEmpty())
+            return ApiResponse.failure(Error.USERS_NOT_FOUND);
+        log.info("유저 이름 -> {}", users.get().getNickname());
+
+
+        return  ApiResponse.success(Success.MULTIPLE_MEMOIR_GET_SUCCESS);
 
     }
 }
