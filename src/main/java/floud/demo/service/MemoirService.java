@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -34,6 +35,13 @@ public class MemoirService {
             return ApiResponse.failure(Error.USERS_NOT_FOUND);
         log.info("유저 이름 -> {}", users.get().getNickname());
 
+        //Check whether user posts today's memoir
+        LocalDateTime startTime = LocalDateTime.now().truncatedTo(ChronoUnit.DAYS);
+        LocalDateTime endTime = startTime.plusDays(1);
+        if(memoirRepository.existsByUserAndCreatedAtBetween(users.get().getId(), startTime, endTime))
+            return ApiResponse.failure(Error.MEMOIR_ALREADY_EXIST);
+
+        //Create Memoir
         Memoir newMemoir = memoirCreateRequestDto.toEntity(users.get());
         memoirRepository.save(newMemoir);
         return ApiResponse.success(Success.MEMOIR_CREATE_SUCCESS, Map.of("memoir_id", newMemoir.getId()));
