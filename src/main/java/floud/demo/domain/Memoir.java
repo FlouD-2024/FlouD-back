@@ -4,11 +4,10 @@ import floud.demo.common.domain.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
+@Getter
 @Entity
 public class Memoir extends BaseTimeEntity {
     @Id
@@ -31,4 +30,14 @@ public class Memoir extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "users_id")
     private Users users;
+
+    @Builder
+    public Memoir(Long id, String title, String keep_memoir, String problem_memoir, String try_memoir, Users users){
+        this.id = id;
+        this.title = title;
+        this.keep_memoir = keep_memoir;
+        this.problem_memoir = problem_memoir;
+        this.try_memoir = try_memoir;
+        this.users = users;
+    }
 }
