@@ -2,12 +2,12 @@ package floud.demo.domain;
 
 import floud.demo.common.domain.BaseTimeEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 @Entity
 public class Memoir extends BaseTimeEntity {
     @Id

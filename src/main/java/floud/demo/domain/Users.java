@@ -12,7 +12,8 @@ import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 
-
+@NoArgsConstructor
+@Getter
 @Entity
 public class Users extends BaseTimeEntity {
     @Id
