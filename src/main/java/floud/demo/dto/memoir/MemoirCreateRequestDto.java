@@ -14,12 +14,13 @@ public class MemoirCreateRequestDto {
     private String problem_memoir;
     private String try_memoir;
 
-    public Memoir toEntity(){
+    public Memoir toEntity(Users users){
         return Memoir.builder()
                 .title(title)
                 .keep_memoir(keep_memoir)
                 .problem_memoir(problem_memoir)
                 .try_memoir(try_memoir)
+                .users(users)
                 .build();
     }
 }
