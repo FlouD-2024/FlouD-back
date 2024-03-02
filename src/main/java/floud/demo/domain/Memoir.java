@@ -1,6 +1,7 @@
 package floud.demo.domain;
 
 import floud.demo.common.domain.BaseTimeEntity;
+import floud.demo.dto.memoir.MemoirUpdateRequestDto;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -41,10 +42,10 @@ public class Memoir extends BaseTimeEntity {
         this.users = users;
     }
 
-    public void update(String title, String keep_memoir, String problem_memoir, String try_memoir){
-        this.title = title;
-        this.keep_memoir = keep_memoir;
-        this.problem_memoir = problem_memoir;
-        this.try_memoir = try_memoir;
+    public void update(MemoirUpdateRequestDto updateRequestDto){
+        this.title = updateRequestDto.getTitle();
+        this.keep_memoir = updateRequestDto.getKeep_memoir();
+        this.problem_memoir = updateRequestDto.getProblem_memoir();
+        this.try_memoir = updateRequestDto.getTry_memoir();
     }
 }

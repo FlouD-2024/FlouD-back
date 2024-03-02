@@ -6,11 +6,11 @@ import floud.demo.common.response.Success;
 import floud.demo.domain.Memoir;
 import floud.demo.domain.Users;
 import floud.demo.dto.memoir.MemoirCreateRequestDto;
+import floud.demo.dto.memoir.MemoirUpdateRequestDto;
 import floud.demo.repository.MemoirRepository;
 import floud.demo.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +26,7 @@ public class MemoirService {
 
     @Transactional
     public ApiResponse<?> createMemoir(MemoirCreateRequestDto memoirCreateRequestDto){
+        //Checking user
         Optional<Users> users = usersRepository.findById(1L);
         if(users.isEmpty())
             return ApiResponse.failure(Error.USERS_NOT_FOUND);
@@ -34,5 +35,25 @@ public class MemoirService {
         Memoir newMemoir = memoirCreateRequestDto.toEntity(users.get());
         memoirRepository.save(newMemoir);
         return ApiResponse.success(Success.MEMOIR_CREATE_SUCCESS, Map.of("memoir_id", newMemoir.getId()));
+    }
+
+    @Transactional
+    public ApiResponse<?> updateMemoir(Long memoir_id, MemoirUpdateRequestDto memoirUpdateRequestDto){
+        //Checking user
+        Optional<Users> users = usersRepository.findById(1L);
+        if(users.isEmpty())
+            return ApiResponse.failure(Error.USERS_NOT_FOUND);
+        log.info("유저 이름 -> {}", users.get().getNickname());
+
+        //Checking memoir
+        Optional<Memoir> optionalMemoir = memoirRepository.findById(memoir_id);
+        if(optionalMemoir.isEmpty())
+            return ApiResponse.failure(Error.MEMOIR_NOT_FOUND);
+        Memoir memoir = optionalMemoir.get();
+
+        //Update Memoir
+        memoir.update(memoirUpdateRequestDto);
+
+        return  ApiResponse.success(Success.MEMOIR_UPDATE_SUCCESS, Map.of("memoir_id", memoir.getId()));
     }
 }
