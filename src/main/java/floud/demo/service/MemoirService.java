@@ -80,7 +80,7 @@ public class MemoirService {
     }
 
     @Transactional
-    public ApiResponse<?> getThisWeekMemoir(LocalDateTime startDate){
+    public ApiResponse<?> getWeekMemoir(LocalDateTime startDate){
         //Checking user
         Optional<Users> users = usersRepository.findById(1L);
         if(users.isEmpty())

@@ -30,7 +30,7 @@ public class MemoirController {
     }
 
     @GetMapping("/week")
-    public ApiResponse<?> getThisWeekMemoir(@RequestParam(name = "start-date") LocalDateTime startDate){
-        return memoirService.getThisWeekMemoir(startDate);
+    public ApiResponse<?> getWeekMemoir(@RequestParam(name = "start-date") LocalDateTime startDate){
+        return memoirService.getWeekMemoir(startDate);
     }
 }
