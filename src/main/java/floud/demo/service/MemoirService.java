@@ -5,9 +5,7 @@ import floud.demo.common.response.Error;
 import floud.demo.common.response.Success;
 import floud.demo.domain.Memoir;
 import floud.demo.domain.Users;
-import floud.demo.dto.memoir.MemoirCreateRequestDto;
-import floud.demo.dto.memoir.MemoirUpdateRequestDto;
-import floud.demo.dto.memoir.OneMemoirResponseDto;
+import floud.demo.dto.memoir.*;
 import floud.demo.repository.MemoirRepository;
 import floud.demo.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,8 +14,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -80,15 +80,34 @@ public class MemoirService {
     }
 
     @Transactional
-    public ApiResponse<?> getWeekMemoir(LocalDateTime startDate){
+    public ApiResponse<?> getWeekMemoir(LocalDateTime startDate, LocalDateTime endDate){
         //Checking user
-        Optional<Users> users = usersRepository.findById(1L);
-        if(users.isEmpty())
+        Optional<Users> optionalUsers = usersRepository.findById(1L);
+        if(optionalUsers.isEmpty())
             return ApiResponse.failure(Error.USERS_NOT_FOUND);
-        log.info("유저 이름 -> {}", users.get().getNickname());
+        Users users = optionalUsers.get();
+        log.info("유저 이름 -> {}", users.getNickname());
+
+        //일주일 간 회고 조회
+        List<Memoir> memoirs = memoirRepository.findAllByWeek(users.getId(), startDate, endDate);
+        log.info("start-date -> {}", startDate);
+        log.info("end-date -> {}", endDate);
+
+        List<MultiMemoir> multiMemoirs = memoirs.stream()
+                .map(memoir -> MultiMemoir.builder()
+                        .memoir_id(memoir.getId())
+                        .title(memoir.getTitle())
+                        .created_at(memoir.getCreated_at())
+                        .build())
+                .collect(Collectors.toList());
 
 
-        return  ApiResponse.success(Success.MULTIPLE_MEMOIR_GET_SUCCESS);
+        MultiMemoirResponseDto responseDto  = MultiMemoirResponseDto.builder()
+                .nickname(users.getNickname())
+                .memoirList(multiMemoirs)
+                .build();
+
+        return  ApiResponse.success(Success.MULTIPLE_MEMOIR_GET_SUCCESS, responseDto);
 
     }
 }
