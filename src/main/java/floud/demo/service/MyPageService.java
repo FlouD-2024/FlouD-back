@@ -3,12 +3,14 @@ package floud.demo.service;
 import floud.demo.common.response.ApiResponse;
 import floud.demo.common.response.Error;
 import floud.demo.common.response.Success;
+import floud.demo.domain.Friendship;
 import floud.demo.domain.Goal;
+import floud.demo.domain.Memoir;
 import floud.demo.domain.Users;
-import floud.demo.dto.mypage.MyGoal;
-import floud.demo.dto.mypage.MypageResponseDto;
-import floud.demo.dto.mypage.MypageUpdateRequestDto;
-import floud.demo.dto.mypage.UpdateGoal;
+import floud.demo.domain.enums.FriendshipStatus;
+import floud.demo.dto.friendship.FriendshipDto;
+import floud.demo.dto.mypage.*;
+import floud.demo.repository.FriendshipRepository;
 import floud.demo.repository.GoalRepository;
 import floud.demo.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +18,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -27,6 +31,7 @@ import java.util.stream.Collectors;
 public class MyPageService {
     private final UsersRepository usersRepository;
     private final GoalRepository goalRepository;
+    private final FriendshipRepository friendshipRepository;
 
 
     /**
@@ -89,8 +94,17 @@ public class MyPageService {
      **/
     @Transactional
     public ApiResponse getFriendList(){
+        //Checking user
+        Optional<Users> optionalUsers = usersRepository.findById(1L);
+        if(optionalUsers.isEmpty())
+            return ApiResponse.failure(Error.USERS_NOT_FOUND);
+        Users users = optionalUsers.get();
+        log.info("유저 이름 -> {}", users.getNickname());
 
-        return ApiResponse.success(Success.GET_FRIEND_LIST_SUCCESS);
+        //Find Friend List
+        MypageFriendListResponseDto responseDto = findFriends(users);
+
+        return ApiResponse.success(Success.GET_FRIEND_LIST_SUCCESS,responseDto);
     }
 
 
@@ -125,4 +139,48 @@ public class MyPageService {
         }
     }
 
+    public MypageFriendListResponseDto findFriends(Users me){
+        List<Friendship> waitingFriends = friendshipRepository.findAllByWaitingToUser(me.getId());
+        List<Friendship> acceptedFriends = friendshipRepository.findAllByUsersId(me.getId());
+
+        List<MyWaiting> myWaitingList = waitingFriends.stream()
+                .map(friendship -> buildMyWaiting(friendship, me))
+                .collect(Collectors.toList());
+
+        List<MyFriend> myFriendList = acceptedFriends.stream()
+                .map(friendship -> buildMyFriend(friendship, me))
+                .collect(Collectors.toList());
+
+        return MypageFriendListResponseDto.builder()
+                .waitingList(myWaitingList)
+                .myFriendList(myFriendList)
+                .build();
+    }
+
+    private MyWaiting buildMyWaiting(Friendship friendship, Users me) {
+        Users friend = getFriend(friendship, me);
+        return MyWaiting.builder()
+                .nickname(friend.getNickname())
+                .friendshipStatus(friendship.getFriendshipStatus())
+                .introduction(friend.getIntroduction())
+                .build();
+    }
+
+    private MyFriend buildMyFriend(Friendship friendship, Users me) {
+        Users friend = getFriend(friendship, me);
+        return MyFriend.builder()
+                .nickname(friend.getNickname())
+                .friendshipStatus(friendship.getFriendshipStatus())
+                .introduction(friend.getIntroduction())
+                .build();
+    }
+
+
+    private Users getFriend(Friendship friendship, Users me) {
+        if (friendship.getTo_user().equals(me)) {
+            return friendship.getFrom_user();
+        } else {
+            return friendship.getTo_user();
+        }
+    }
 }
