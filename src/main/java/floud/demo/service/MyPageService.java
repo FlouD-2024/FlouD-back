@@ -182,6 +182,7 @@ public class MyPageService {
     private MyWaiting buildMyWaiting(Friendship friendship, Users me) {
         Users friend = getFriend(friendship, me);
         return MyWaiting.builder()
+                .friendship_id(friendship.getId())
                 .nickname(friend.getNickname())
                 .friendshipStatus(friendship.getFriendshipStatus())
                 .introduction(friend.getIntroduction())
@@ -191,6 +192,7 @@ public class MyPageService {
     private MyFriend buildMyFriend(Friendship friendship, Users me) {
         Users friend = getFriend(friendship, me);
         return MyFriend.builder()
+                .friendship_id(friendship.getId())
                 .nickname(friend.getNickname())
                 .friendshipStatus(friendship.getFriendshipStatus())
                 .introduction(friend.getIntroduction())

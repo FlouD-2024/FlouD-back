@@ -7,6 +7,7 @@ import lombok.Getter;
 @Getter
 @Builder
 public class MypageFriendUpdateRequestDto {
+    private Long friendship_id;
     private String nickname;
     private FriendshipStatus friendshipStatus;
 }

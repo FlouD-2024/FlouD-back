@@ -7,6 +7,7 @@ import lombok.Getter;
 @Builder
 @Getter
 public class MyFriend {
+    private Long friendship_id;
     private String nickname;
     private FriendshipStatus friendshipStatus;
     private String introduction;
