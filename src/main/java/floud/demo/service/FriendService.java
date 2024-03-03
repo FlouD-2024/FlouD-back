@@ -65,9 +65,14 @@ public class FriendService {
         //Checking friend is existed
         Optional<Users> optionalFriend = usersRepository.findByNickname(requestDto.getNickname());
         if(optionalFriend.isEmpty())
-            return ApiResponse.failure(Error.USERS_NOT_FOUND);
+            return ApiResponse.failure(Error.FRIEND_NICKNAME_NOT_FOUND);
         Users friend = optionalFriend.get();
 
+        //Check friendship already existing
+        Optional<Friendship> existingFriendship = friendshipRepository.findByToUserAndFromUser(users.getId(), friend.getId());
+        if (existingFriendship.isPresent()) {
+            return ApiResponse.failure(Error.FRIENDSHIP_ALREADY_EXIST);
+        }
         //Create Friendship
         Friendship newFriendship = requestDto.toEntity(users,friend);
         friendshipRepository.save(newFriendship);
