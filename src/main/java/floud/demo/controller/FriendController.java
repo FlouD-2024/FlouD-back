@@ -14,6 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class FriendController {
     private final FriendService friendService;
 
+    @GetMapping
+    public ApiResponse<?> getFriends(){
+        return friendService.getFriends();
+    }
+
     @GetMapping("memoir/{memoir_id}")
     public ApiResponse<?> getOneMemoir(@PathVariable Long memoir_id){
         return friendService.getMemoirOfFriend(memoir_id);

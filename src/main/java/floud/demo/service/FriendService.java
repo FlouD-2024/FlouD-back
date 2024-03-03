@@ -17,6 +17,11 @@ import java.util.Optional;
 public class FriendService {
 
     private final MemoirRepository memoirRepository;
+
+    @Transactional
+    public ApiResponse<?> getFriends(){
+        return ApiResponse.success(Success.SUCCESS);
+    }
     @Transactional
     public ApiResponse<?> getMemoirOfFriend(Long memoir_id){
         //Checking memoir
