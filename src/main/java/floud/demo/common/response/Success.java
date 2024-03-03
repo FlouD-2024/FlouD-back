@@ -27,7 +27,7 @@ public enum Success {
     //201 CREATED SUCCESS
     CREATE_MEMOIR_SUCCESS(HttpStatus.CREATED, "성공적으로 회고를 등록하였습니다."),
     UPDATE_MYPAGE_SUCCESS(HttpStatus.CREATED , "마이페이지를 성공적으로 수정하였습니다."),
-    REQUEST_FRIEND_SUCCESS(HttpStatus.CREATED , "친구 요청을 성공적으로 보냈였습니다. "),
+    REQUEST_FRIEND_SUCCESS(HttpStatus.CREATED , "친구 요청을 성공적으로 보내었습니다. "),
     ACCEPT_FRIEND_SUCCESS(HttpStatus.CREATED , "성공적으로 친구 수락을 완료하였습니다. "),
     ;
 
