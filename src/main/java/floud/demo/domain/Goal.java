@@ -3,10 +3,12 @@ package floud.demo.domain;
 import floud.demo.common.domain.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+@Getter
 @NoArgsConstructor
 @Entity
 public class Goal extends BaseTimeEntity {
