@@ -69,7 +69,7 @@ public class FriendService {
         Users friend = optionalFriend.get();
 
         //Check friendship already existing
-        Optional<Friendship> existingFriendship = friendshipRepository.findByToUserAndFromUser(users.getId(), friend.getId());
+        Optional<Friendship> existingFriendship = friendshipRepository.checkExistingFriendship(users.getId(), friend.getId());
         if (existingFriendship.isPresent()) {
             return ApiResponse.failure(Error.FRIENDSHIP_ALREADY_EXIST);
         }
