@@ -1,5 +1,7 @@
 package floud.demo.dto.mypage;
 
+import floud.demo.dto.mypage.dto.MyFriend;
+import floud.demo.dto.mypage.dto.MyWaiting;
 import lombok.Builder;
 import lombok.Getter;
 

@@ -1,5 +1,6 @@
 package floud.demo.dto.mypage;
 
+import floud.demo.dto.mypage.dto.MyGoal;
 import lombok.Builder;
 import lombok.Getter;
 

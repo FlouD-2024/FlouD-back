@@ -1,12 +1,12 @@
-package floud.demo.dto.mypage;
+package floud.demo.dto.mypage.dto;
 
 import floud.demo.domain.enums.FriendshipStatus;
 import lombok.Builder;
 import lombok.Getter;
 
-@Builder
 @Getter
-public class MyFriend {
+@Builder
+public class MyWaiting {
     private Long friendship_id;
     private String nickname;
     private FriendshipStatus friendshipStatus;
