@@ -5,11 +5,13 @@ import floud.demo.common.response.Error;
 import floud.demo.common.response.Success;
 import floud.demo.domain.Friendship;
 import floud.demo.domain.Goal;
-import floud.demo.domain.Memoir;
 import floud.demo.domain.Users;
 import floud.demo.domain.enums.FriendshipStatus;
-import floud.demo.dto.friendship.FriendshipDto;
 import floud.demo.dto.mypage.*;
+import floud.demo.dto.mypage.dto.MyFriend;
+import floud.demo.dto.mypage.dto.MyGoal;
+import floud.demo.dto.mypage.dto.MyWaiting;
+import floud.demo.dto.mypage.dto.UpdateGoal;
 import floud.demo.repository.FriendshipRepository;
 import floud.demo.repository.GoalRepository;
 import floud.demo.repository.UsersRepository;
@@ -18,8 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -130,6 +130,33 @@ public class MyPageService {
         friendship.updateStatus(requestDto.getFriendshipStatus());
 
         return ApiResponse.success(Success.UPDATE_FRIEND_SUCCESS, Map.of("nowStatus", friendship.getFriendshipStatus()));
+    }
+
+    @Transactional
+    public ApiResponse<?> deleteFriend(Long friendship_id){
+        //Checking user
+        Optional<Users> optionalUsers = usersRepository.findById(1L);
+        if(optionalUsers.isEmpty())
+            return ApiResponse.failure(Error.USERS_NOT_FOUND);
+        Users users = optionalUsers.get();
+        log.info("유저 이름 -> {}", users.getNickname());
+
+        //Find Friendship
+        Optional<Friendship> optionalFriendship = friendshipRepository.findById(friendship_id);
+        if(optionalFriendship.isEmpty())
+            return ApiResponse.failure(Error.FRIENDSHIP_NOT_FOUND);
+        Friendship friendship = optionalFriendship.get();
+
+        //Update Friendship
+        friendship.updateStatus(FriendshipStatus.REJECT);
+
+        return ApiResponse.success(Success.DELETE_FRIEND_SUCCESS, MypageFriendDeleteResponseDto.builder()
+                .friendship_id(friendship_id)
+                .to_user(friendship.getTo_user().getNickname())
+                .from_user(friendship.getFrom_user().getNickname())
+                .friendshipStatus(friendship.getFriendshipStatus())
+                .build());
+
     }
 
     public List<MyGoal> setGoalList(Long users_id){

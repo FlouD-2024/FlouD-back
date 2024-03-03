@@ -36,4 +36,9 @@ public class MypageController {
     public ApiResponse<?> updateFriend(@RequestBody MypageFriendUpdateRequestDto requestDto){
         return myPageService.updateFriend(requestDto);
     }
+
+    @PutMapping("/friend/{friendship_id}")
+    public ApiResponse<?> deleteFriend(@PathVariable(name = "friendship_id") Long friendship_id){
+        return myPageService.deleteFriend(friendship_id);
+    }
 }
