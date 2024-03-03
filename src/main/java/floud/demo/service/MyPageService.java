@@ -55,6 +55,7 @@ public class MyPageService {
         return ApiResponse.success(Success.GET_MYPAGE_SUCCESS, responseDto);
     }
 
+    @Transactional
     public ApiResponse<?> updateMypage(MypageUpdateRequestDto requestDto){
         //Checking user
         Optional<Users> optionalUsers = usersRepository.findById(1L);
@@ -70,4 +71,6 @@ public class MyPageService {
         //MypageResonsedto 리턴하기
         return ApiResponse.success(Success.UPDATE_MYPAGE_SUCCESS, Map.of("nicknmae", requestDto.getNickname()));
     }
+
+
 }
