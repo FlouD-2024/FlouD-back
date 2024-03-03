@@ -19,7 +19,7 @@ public class FriendController {
         return friendService.getFriendsInfo(date);
     }
 
-    @PostMapping()
+    @PostMapping("/request")
     public ApiResponse<?> addFriend(@RequestBody FriendshipCreateRequestDto requestDto){
         return friendService.addFriend(requestDto);
     }

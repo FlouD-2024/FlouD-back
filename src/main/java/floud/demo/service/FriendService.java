@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -54,7 +55,24 @@ public class FriendService {
 
     @Transactional
     public ApiResponse<?> addFriend(FriendshipCreateRequestDto requestDto){
-        return ApiResponse.success(Success.REQUEST_FRIEND_SUCCESS);
+        //Checking user
+        Optional<Users> optionalUsers = usersRepository.findById(1L);
+        if(optionalUsers.isEmpty())
+            return ApiResponse.failure(Error.USERS_NOT_FOUND);
+        Users users = optionalUsers.get();
+        log.info("유저 이름 -> {}", users.getNickname());
+
+        //Checking friend is existed
+        Optional<Users> optionalFriend = usersRepository.findByNickname(requestDto.getNickname());
+        if(optionalFriend.isEmpty())
+            return ApiResponse.failure(Error.USERS_NOT_FOUND);
+        Users friend = optionalFriend.get();
+
+        //Create Friendship
+        Friendship newFriendship = requestDto.toEntity(users,friend);
+        friendshipRepository.save(newFriendship);
+
+        return ApiResponse.success(Success.REQUEST_FRIEND_SUCCESS, Map.of("friendship_id", newFriendship.getId()));
     }
 
     @Transactional
