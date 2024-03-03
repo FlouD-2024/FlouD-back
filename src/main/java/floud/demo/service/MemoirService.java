@@ -42,7 +42,7 @@ public class MemoirService {
         //Create Memoir
         Memoir newMemoir = memoirCreateRequestDto.toEntity(users.get());
         memoirRepository.save(newMemoir);
-        return ApiResponse.success(Success.MEMOIR_CREATE_SUCCESS, Map.of("memoir_id", newMemoir.getId()));
+        return ApiResponse.success(Success.CREATE_MEMOIR_SUCCESS, Map.of("memoir_id", newMemoir.getId()));
     }
 
     @Transactional
@@ -62,7 +62,7 @@ public class MemoirService {
         //Update Memoir
         memoir.update(memoirUpdateRequestDto);
 
-        return  ApiResponse.success(Success.MEMOIR_UPDATE_SUCCESS, Map.of("memoir_id", memoir.getId()));
+        return  ApiResponse.success(Success.UPDATE_MEMOIR_SUCCESS, Map.of("memoir_id", memoir.getId()));
     }
 
     @Transactional
@@ -123,7 +123,7 @@ public class MemoirService {
                 .memoirList(multiMemoirs)
                 .build();
 
-        return  ApiResponse.success(Success.MULTIPLE_MEMOIR_GET_SUCCESS, responseDto);
+        return  ApiResponse.success(Success.GET_MULTIPLE_MEMOIR_SUCCESS, responseDto);
 
     }
 }
