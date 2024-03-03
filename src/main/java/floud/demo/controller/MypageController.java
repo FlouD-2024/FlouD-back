@@ -3,6 +3,7 @@ package floud.demo.controller;
 import floud.demo.common.response.ApiResponse;
 import floud.demo.dto.mypage.MypageUpdateRequestDto;
 import floud.demo.service.MyPageService;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,6 +15,10 @@ public class MypageController {
     @GetMapping
     public ApiResponse<?> getMypage(){
         return myPageService.getMypage();
+    }
+    @GetMapping("/check")
+    public ApiResponse<?> checkDuplicatedName(@RequestParam(name = "nickname") String nickname){
+        return  myPageService.checkDuplicatedName(nickname);
     }
 
     @PutMapping

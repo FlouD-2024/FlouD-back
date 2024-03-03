@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -43,6 +44,12 @@ public class MyPageService {
                 .introduction(users.getIntroduction())
                 .goalList(goalList)
                 .build());
+    }
+
+    @Transactional
+    public ApiResponse<?> checkDuplicatedName(String nickname){
+
+        return ApiResponse.success(Success.SUCCESS);
     }
 
     @Transactional
