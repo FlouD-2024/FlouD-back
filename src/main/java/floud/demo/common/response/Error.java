@@ -20,7 +20,7 @@ public enum Error {
     // 409 CONFLICT
     MEMOIR_ALREADY_EXIST(HttpStatus.CONFLICT, "이미 오늘의 회고를 작성하였습니다."),
     FRIENDSHIP_ALREADY_EXIST(HttpStatus.CONFLICT, "이미 친구 관계가 존재합니다."),
-
+    NOT_MATCHED_NICKNAME(HttpStatus.CONFLICT, "친구 관계 정보가 일치하지 않습니다."),
 
     // 500 INTERNAL SERVER ERROR
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error"),
