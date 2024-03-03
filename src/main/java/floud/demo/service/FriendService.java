@@ -6,6 +6,7 @@ import floud.demo.common.response.Success;
 import floud.demo.domain.Friendship;
 import floud.demo.domain.Memoir;
 import floud.demo.domain.Users;
+import floud.demo.dto.friendship.FriendshipCreateRequestDto;
 import floud.demo.dto.friendship.FriendshipDto;
 import floud.demo.dto.friendship.FriendshipListResponseDto;
 import floud.demo.dto.memoir.OneMemoirResponseDto;
@@ -48,6 +49,12 @@ public class FriendService {
                         .my_nickname(users.getNickname())
                         .friendshipList(friendshipList)
                         .build());
+    }
+
+
+    @Transactional
+    public ApiResponse<?> addFriend(FriendshipCreateRequestDto requestDto){
+        return ApiResponse.success(Success.REQUEST_FRIEND_SUCCESS);
     }
 
     @Transactional
