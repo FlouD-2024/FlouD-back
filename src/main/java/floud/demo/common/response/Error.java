@@ -14,6 +14,7 @@ public enum Error {
     // 404 NOT FOUND
     USERS_NOT_FOUND(HttpStatus.NOT_FOUND, "유저 정보를 찾을 수 없습니다."),
     FRIEND_NICKNAME_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 닉네임의 회원을 찾을 수 없습니다."),
+    FRIENDSHIP_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 친구 관계를 찾을 수 없습니다."),
     MEMOIR_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 회고를 찾을 수 없습니다."),
 
     // 409 CONFLICT

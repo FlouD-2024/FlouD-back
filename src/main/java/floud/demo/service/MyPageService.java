@@ -124,6 +124,8 @@ public class MyPageService {
         log.info("친구 이름 -> {}", users.getNickname());
 
         Friendship friendship = friendshipRepository.findByUserIds(users.getId(), friend.getId());
+        if(friendship == null)
+            return ApiResponse.failure(Error.FRIENDSHIP_NOT_FOUND);
         friendship.updateStatus(requestDto.getFriendshipStatus());
 
         return ApiResponse.success(Success.UPDATE_FRIEND_SUCCESS, Map.of("nowStatus", friendship.getFriendshipStatus()));
