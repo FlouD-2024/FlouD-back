@@ -49,4 +49,8 @@ public class Users extends BaseTimeEntity {
         this.memoirList = memoirList;
 
     }
+
+    public void updateIntroduction(String introduction){
+        this.introduction = introduction;
+    }
 }

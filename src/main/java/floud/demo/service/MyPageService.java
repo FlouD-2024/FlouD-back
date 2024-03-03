@@ -56,7 +56,18 @@ public class MyPageService {
     }
 
     public ApiResponse<?> updateMypage(MypageUpdateRequestDto requestDto){
+        //Checking user
+        Optional<Users> optionalUsers = usersRepository.findById(1L);
+        if(optionalUsers.isEmpty())
+            return ApiResponse.failure(Error.USERS_NOT_FOUND);
+        Users users = optionalUsers.get();
+        log.info("유저 이름 -> {}", users.getNickname());
 
+        //Update Introduction
+        users.updateIntroduction(requestDto.getIntroduction());
+        usersRepository.save(users);
+
+        //MypageResonsedto 리턴하기
         return ApiResponse.success(Success.UPDATE_MYPAGE_SUCCESS, Map.of("nicknmae", requestDto.getNickname()));
     }
 }
