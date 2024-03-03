@@ -9,5 +9,5 @@ import java.util.List;
 public class MypageUpdateRequestDto {
     private String nickname;
     private String introduction;
-    private List<Goal> goalList;
+    private List<UpdateGoal> goalList;
 }
