@@ -6,7 +6,7 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 
 @Getter
-public class myGoal {
+public class MyGoal {
     private Long goal_id;
     private String content;
     private LocalDateTime deadline;

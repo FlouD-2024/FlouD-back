@@ -10,5 +10,5 @@ import java.util.List;
 public class MypageResponseDto {
     private String nickname;
     private String introduction;
-    private List<myGoal> goalList;
+    private List<MyGoal> goalList;
 }
