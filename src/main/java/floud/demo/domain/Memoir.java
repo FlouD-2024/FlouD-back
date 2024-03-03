@@ -1,21 +1,18 @@
 package floud.demo.domain;
 
+import floud.demo.common.domain.BaseDateEntity;
 import floud.demo.dto.memoir.MemoirUpdateRequestDto;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
 
 @Getter
 @NoArgsConstructor
-@EntityListeners(AuditingEntityListener.class)
 @Entity
-public class Memoir{
+public class Memoir extends BaseDateEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "memoir_id")
@@ -32,15 +29,6 @@ public class Memoir{
 
     @Column
     private String try_memoir;
-
-    //YYYY-MM-DD 형식으로 변경
-    @CreatedDate
-    @Column
-    private LocalDate created_at;
-
-    @LastModifiedDate
-    @Column
-    private  LocalDate updated_at;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "users_id")
