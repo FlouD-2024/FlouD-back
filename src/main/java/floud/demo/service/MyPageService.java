@@ -27,6 +27,11 @@ import java.util.stream.Collectors;
 public class MyPageService {
     private final UsersRepository usersRepository;
     private final GoalRepository goalRepository;
+
+
+    /**
+     * 내 정보
+     **/
     @Transactional
     public ApiResponse<?> getMypage(){
         //Checking user
@@ -78,6 +83,17 @@ public class MyPageService {
                 .goalList(updatedGoalList)
                 .build());
     }
+
+    /**
+     * 친구 관리
+     **/
+    @Transactional
+    public ApiResponse getFriendList(){
+
+        return ApiResponse.success(Success.GET_FRIEND_LIST_SUCCESS);
+    }
+
+
 
     public List<MyGoal> setGoalList(Long users_id){
         List<Goal> goals = goalRepository.findAllByUserId(users_id);

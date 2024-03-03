@@ -16,6 +16,7 @@ public class MypageController {
     public ApiResponse<?> getMypage(){
         return myPageService.getMypage();
     }
+
     @GetMapping("/check")
     public ApiResponse<?> checkDuplicatedName(@RequestParam(name = "nickname") String nickname){
         return  myPageService.checkDuplicatedName(nickname);
@@ -24,5 +25,10 @@ public class MypageController {
     @PutMapping
     public ApiResponse<?> updateMypage(@RequestBody MypageUpdateRequestDto mypageUpdateRequestDto) {
         return myPageService.updateMypage(mypageUpdateRequestDto);
+    }
+
+    @GetMapping("/friend")
+    public ApiResponse<?> getFriendList(){
+        return myPageService.getFriendList();
     }
 }
