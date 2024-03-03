@@ -11,6 +11,12 @@ public enum Error {
     // Default
     ERROR(HttpStatus.BAD_REQUEST, "Request processing failed"),
 
+    // 404 NOT FOUND
+    USERS_NOT_FOUND(HttpStatus.NOT_FOUND, "유저 정보를 찾을 수 없습니다."),
+    MEMOIR_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 회고를 찾을 수 없습니다."),
+
+    // 409 CONFLICT
+    MEMOIR_ALREADY_EXIST(HttpStatus.CONFLICT, "이미 오늘의 회고를 작성하였습니다."),
 
     // 500 INTERNAL SERVER ERROR
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error"),
