@@ -25,9 +25,6 @@ public interface FriendshipRepository extends JpaRepository<Friendship, Long> {
             "WHERE f.friendship_status = 'WAITING' AND  f.to_user = :users_id", nativeQuery = true)
     List<Friendship> findAllByWaitingToUser(Long users_id);
 
-    //수락하기 위해 대기 상태인 Friendship 찾기
-    @Query(value = "SELECT * FROM friendship f " +
-            "WHERE f.friendship_status = 'WAITING' AND  f.to_user = :to_user AND f.from_user = :from_user", nativeQuery = true)
-    Friendship findByUserIds(Long to_user, Long from_user);
+    Optional<Friendship> findById(Long id);
 
 }

@@ -116,16 +116,17 @@ public class MyPageService {
         Users users = optionalUsers.get();
         log.info("유저 이름 -> {}", users.getNickname());
 
-        //Checking friend is existed
-        Optional<Users> optionalFriend = usersRepository.findByNickname(requestDto.getNickname());
-        if(optionalFriend.isEmpty())
-            return ApiResponse.failure(Error.FRIEND_NICKNAME_NOT_FOUND);
-        Users friend = optionalFriend.get();
-        log.info("친구 이름 -> {}", users.getNickname());
-
-        Friendship friendship = friendshipRepository.findByUserIds(users.getId(), friend.getId());
-        if(friendship == null)
+        //Find Friendship
+        Optional<Friendship> optionalFriendship = friendshipRepository.findById(requestDto.getFriendship_id());
+        if(optionalFriendship.isEmpty())
             return ApiResponse.failure(Error.FRIENDSHIP_NOT_FOUND);
+        Friendship friendship = optionalFriendship.get();
+
+        //Check whether request nickname and friendship's from user nickname is matched
+        if(!friendship.getFrom_user().getNickname().equals(requestDto.getNickname()))
+            return ApiResponse.failure(Error.NOT_MATCHED_NICKNAME);
+
+        //Update Friendship
         friendship.updateStatus(requestDto.getFriendshipStatus());
 
         return ApiResponse.success(Success.UPDATE_FRIEND_SUCCESS, Map.of("nowStatus", friendship.getFriendshipStatus()));
