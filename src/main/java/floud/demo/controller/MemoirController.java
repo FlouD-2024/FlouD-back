@@ -7,7 +7,7 @@ import floud.demo.service.MemoirService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @RequiredArgsConstructor
 @RestController
@@ -25,13 +25,13 @@ public class MemoirController {
     }
 
     @GetMapping("/my")
-    public ApiResponse<?> getOneMemoir(@RequestParam(name = "date") LocalDateTime dateTime){
+    public ApiResponse<?> getOneMemoir(@RequestParam(name = "date") LocalDate dateTime){
         return memoirService.getOneMemoir(dateTime);
     }
 
     @GetMapping("/week")
-    public ApiResponse<?> getWeekMemoir(@RequestParam(name = "start-date") LocalDateTime startDate){
-        LocalDateTime endDate = startDate.plusDays(7);
+    public ApiResponse<?> getWeekMemoir(@RequestParam(name = "start-date") LocalDate startDate){
+        LocalDate endDate = startDate.plusDays(7);
         return memoirService.getWeekMemoir(startDate, endDate);
     }
 }

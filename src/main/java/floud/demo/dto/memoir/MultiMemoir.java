@@ -3,12 +3,12 @@ package floud.demo.dto.memoir;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Getter
 @Builder
 public class MultiMemoir {
     private Long memoir_id;
     private String title;
-    private LocalDateTime created_at;
+    private LocalDate created_at;
 }

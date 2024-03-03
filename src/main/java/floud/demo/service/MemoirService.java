@@ -13,8 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -36,9 +35,8 @@ public class MemoirService {
         log.info("유저 이름 -> {}", users.get().getNickname());
 
         //Check whether user posts today's memoir
-        LocalDateTime startTime = LocalDateTime.now().truncatedTo(ChronoUnit.DAYS);
-        LocalDateTime endTime = startTime.plusDays(1);
-        if(memoirRepository.existsByUserAndCreatedAtBetween(users.get().getId(), startTime, endTime))
+        LocalDate now = LocalDate.now();
+        if(memoirRepository.existsByUserAndCreatedAtBetween(users.get().getId(), now))
             return ApiResponse.failure(Error.MEMOIR_ALREADY_EXIST);
 
         //Create Memoir
@@ -68,7 +66,7 @@ public class MemoirService {
     }
 
     @Transactional
-    public ApiResponse<?> getOneMemoir(LocalDateTime dateTime){
+    public ApiResponse<?> getOneMemoir(LocalDate dateTime){
         //Checking user
         Optional<Users> users = usersRepository.findById(1L);
         if(users.isEmpty())
@@ -76,9 +74,7 @@ public class MemoirService {
         log.info("유저 이름 -> {}", users.get().getNickname());
 
         //Check whether user posts today's memoir
-        LocalDateTime startTime = dateTime.truncatedTo(ChronoUnit.DAYS);
-        LocalDateTime endTime = startTime.plusDays(1);
-        Optional<Memoir> optionalMemoir = memoirRepository.findByCreatedAt(users.get().getId(), startTime, endTime);
+        Optional<Memoir> optionalMemoir = memoirRepository.findByCreatedAt(users.get().getId(), dateTime);
 
         if(optionalMemoir.isEmpty())
             return ApiResponse.failure(Error.MEMOIR_NOT_FOUND);
@@ -100,7 +96,7 @@ public class MemoirService {
     }
 
     @Transactional
-    public ApiResponse<?> getWeekMemoir(LocalDateTime startDate, LocalDateTime endDate){
+    public ApiResponse<?> getWeekMemoir(LocalDate startDate, LocalDate endDate){
         //Checking user
         Optional<Users> optionalUsers = usersRepository.findById(1L);
         if(optionalUsers.isEmpty())
