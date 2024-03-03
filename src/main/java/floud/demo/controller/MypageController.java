@@ -1,9 +1,9 @@
 package floud.demo.controller;
 
 import floud.demo.common.response.ApiResponse;
+import floud.demo.dto.mypage.MypageFriendUpdateRequestDto;
 import floud.demo.dto.mypage.MypageUpdateRequestDto;
 import floud.demo.service.MyPageService;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,5 +30,10 @@ public class MypageController {
     @GetMapping("/friend")
     public ApiResponse<?> getFriendList(){
         return myPageService.getFriendList();
+    }
+
+    @PutMapping("/friend")
+    public ApiResponse<?> acceptFriend(@RequestBody MypageFriendUpdateRequestDto requestDto){
+        return myPageService.acceptFriend(requestDto);
     }
 }

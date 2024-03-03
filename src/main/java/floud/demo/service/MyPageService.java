@@ -93,7 +93,7 @@ public class MyPageService {
      * 친구 관리
      **/
     @Transactional
-    public ApiResponse getFriendList(){
+    public ApiResponse<?> getFriendList(){
         //Checking user
         Optional<Users> optionalUsers = usersRepository.findById(1L);
         if(optionalUsers.isEmpty())
@@ -107,7 +107,27 @@ public class MyPageService {
         return ApiResponse.success(Success.GET_FRIEND_LIST_SUCCESS,responseDto);
     }
 
+    @Transactional
+    public ApiResponse<?> acceptFriend(MypageFriendUpdateRequestDto requestDto){
+        //Checking user
+        Optional<Users> optionalUsers = usersRepository.findById(1L);
+        if(optionalUsers.isEmpty())
+            return ApiResponse.failure(Error.USERS_NOT_FOUND);
+        Users users = optionalUsers.get();
+        log.info("유저 이름 -> {}", users.getNickname());
 
+        //Checking friend is existed
+        Optional<Users> optionalFriend = usersRepository.findByNickname(requestDto.getNickname());
+        if(optionalFriend.isEmpty())
+            return ApiResponse.failure(Error.FRIEND_NICKNAME_NOT_FOUND);
+        Users friend = optionalFriend.get();
+        log.info("친구 이름 -> {}", users.getNickname());
+
+        Friendship friendship = friendshipRepository.findByUserIds(users.getId(), friend.getId());
+        friendship.updateStatus(requestDto.getFriendshipStatus());
+
+        return ApiResponse.success(Success.UPDATE_FRIEND_SUCCESS, Map.of("nowStatus", friendship.getFriendshipStatus()));
+    }
 
     public List<MyGoal> setGoalList(Long users_id){
         List<Goal> goals = goalRepository.findAllByUserId(users_id);
