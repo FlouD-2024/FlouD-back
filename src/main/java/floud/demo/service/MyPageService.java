@@ -108,7 +108,7 @@ public class MyPageService {
     }
 
     @Transactional
-    public ApiResponse<?> acceptFriend(MypageFriendUpdateRequestDto requestDto){
+    public ApiResponse<?> updateFriend(MypageFriendUpdateRequestDto requestDto){
         //Checking user
         Optional<Users> optionalUsers = usersRepository.findById(1L);
         if(optionalUsers.isEmpty())

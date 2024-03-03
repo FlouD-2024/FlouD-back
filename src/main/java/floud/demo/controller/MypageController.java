@@ -33,7 +33,7 @@ public class MypageController {
     }
 
     @PutMapping("/friend")
-    public ApiResponse<?> acceptFriend(@RequestBody MypageFriendUpdateRequestDto requestDto){
-        return myPageService.acceptFriend(requestDto);
+    public ApiResponse<?> updateFriend(@RequestBody MypageFriendUpdateRequestDto requestDto){
+        return myPageService.updateFriend(requestDto);
     }
 }
