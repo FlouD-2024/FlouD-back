@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface FriendshipRepository extends JpaRepository<Friendship, Long> {
     @Query(value = "SELECT * FROM friendship f " +
-            "WHERE f.friendship_status = 'ACCPET' " +
+            "WHERE f.friendship_status = 'ACCEPT' " +
             "AND f.to_user = :users_id OR f.from_user = :users_id", nativeQuery = true)
     List<Friendship> findAllByUsersId(Long users_id);
 
