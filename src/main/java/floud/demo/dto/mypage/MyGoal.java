@@ -4,6 +4,7 @@ package floud.demo.dto.mypage;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Builder
@@ -11,5 +12,5 @@ import java.time.LocalDateTime;
 public class MyGoal {
     private Long goal_id;
     private String content;
-    private LocalDateTime deadline;
+    private LocalDate deadline;
 }

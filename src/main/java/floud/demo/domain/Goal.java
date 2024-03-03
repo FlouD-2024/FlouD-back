@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Getter
 @NoArgsConstructor
@@ -21,21 +21,21 @@ public class Goal extends BaseTimeEntity {
     private String content;
 
     @Column(nullable = false)
-    private LocalDateTime deadline;
+    private LocalDate deadline;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "users_id")
     private Users users;
 
     @Builder
-    public Goal(Long id, String content, LocalDateTime deadline, Users users){
+    public Goal(Long id, String content, LocalDate deadline, Users users){
         this.id = id;
         this.content = content;
         this.deadline = deadline;
         this.users = users;
     }
 
-    public void update(String content, LocalDateTime deadline){
+    public void update(String content, LocalDate deadline){
         this.content = content;
         this.deadline = deadline;
     }
