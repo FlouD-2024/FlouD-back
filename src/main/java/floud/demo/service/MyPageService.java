@@ -35,24 +35,14 @@ public class MyPageService {
         Users users = optionalUsers.get();
         log.info("유저 이름 -> {}", users.getNickname());
 
-        List<Goal> goals = goalRepository.findAllByUserId(users.getId());
-        List<MyGoal> goalList = goals.stream()
-                .map(goal -> MyGoal.builder()
-                        .goal_id(goal.getId())
-                        .content(goal.getContent())
-                        .deadline(goal.getDeadLine())
-                        .build())
-                .collect(Collectors.toList());
+        //set GoalList
+        List<MyGoal> goalList = setGoalList(users.getId());
 
-
-        MypageResponseDto responseDto = MypageResponseDto.builder()
+        return ApiResponse.success(Success.GET_MYPAGE_SUCCESS, MypageResponseDto.builder()
                 .nickname(users.getNickname())
                 .introduction(users.getIntroduction())
                 .goalList(goalList)
-                .build();
-
-
-        return ApiResponse.success(Success.GET_MYPAGE_SUCCESS, responseDto);
+                .build());
     }
 
     @Transactional
@@ -72,5 +62,17 @@ public class MyPageService {
         return ApiResponse.success(Success.UPDATE_MYPAGE_SUCCESS, Map.of("nicknmae", requestDto.getNickname()));
     }
 
+    public List<MyGoal> setGoalList(Long users_id){
+        List<Goal> goals = goalRepository.findAllByUserId(users_id);
+        List<MyGoal> goalList = goals.stream()
+                .map(goal -> MyGoal.builder()
+                        .goal_id(goal.getId())
+                        .content(goal.getContent())
+                        .deadline(goal.getDeadLine())
+                        .build())
+                .collect(Collectors.toList());
+
+        return goalList;
+    }
 
 }
