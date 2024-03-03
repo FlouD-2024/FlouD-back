@@ -8,6 +8,7 @@ import floud.demo.domain.Users;
 import floud.demo.dto.mypage.MyGoal;
 import floud.demo.dto.mypage.MypageResponseDto;
 import floud.demo.dto.mypage.MypageUpdateRequestDto;
+import floud.demo.dto.mypage.UpdateGoal;
 import floud.demo.repository.GoalRepository;
 import floud.demo.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -58,21 +58,48 @@ public class MyPageService {
         users.updateIntroduction(requestDto.getIntroduction());
         usersRepository.save(users);
 
+        //Update Goals
+        updateGoal(users, requestDto.getGoalList());
+
+        //set GoalList
+        List<MyGoal> updatedGoalList = setGoalList(users.getId());
+
         //MypageResonsedto 리턴하기
-        return ApiResponse.success(Success.UPDATE_MYPAGE_SUCCESS, Map.of("nicknmae", requestDto.getNickname()));
+        return ApiResponse.success(Success.UPDATE_MYPAGE_SUCCESS, MypageResponseDto.builder()
+                .nickname(users.getNickname())
+                .introduction(users.getIntroduction())
+                .goalList(updatedGoalList)
+                .build());
     }
 
     public List<MyGoal> setGoalList(Long users_id){
         List<Goal> goals = goalRepository.findAllByUserId(users_id);
-        List<MyGoal> goalList = goals.stream()
+        return goals.stream()
                 .map(goal -> MyGoal.builder()
                         .goal_id(goal.getId())
                         .content(goal.getContent())
-                        .deadline(goal.getDeadLine())
+                        .deadline(goal.getDeadline())
                         .build())
                 .collect(Collectors.toList());
+    }
 
-        return goalList;
+    public void updateGoal(Users users, List<UpdateGoal> requestDtoGoalList){
+        List<Goal> goals = goalRepository.findAllByUserId(users.getId());
+
+        // Delete all existing goals
+        goalRepository.deleteAll(goals);
+
+        // Add new goals
+        for (UpdateGoal requestGoal : requestDtoGoalList) {
+            log.info("수정된 디데이 -> {}", requestGoal.getContent());
+            log.info("수정된 데드라인 -> {}", requestGoal.getDeadline());
+            UpdateGoal goal = UpdateGoal.builder()
+                    .content(requestGoal.getContent())
+                    .deadline(requestGoal.getDeadline())
+                    .build();
+            Goal newGoal = goal.toEntity(users);
+            goalRepository.save(newGoal);
+        }
     }
 
 }
