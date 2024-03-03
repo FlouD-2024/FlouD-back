@@ -12,13 +12,19 @@ public enum Success {
     SUCCESS(HttpStatus.OK, "Request successfully processed"),
 
     //200 SUCCESS
-    MEMOIR_UPDATE_SUCCESS(HttpStatus.OK , "성공적으로 회고를 수정하였습니다."),
+    UPDATE_MEMOIR_SUCCESS(HttpStatus.OK , "성공적으로 회고를 수정하였습니다."),
     GET_MY_MEMOIR_SUCCESS(HttpStatus.OK , "나의 회고를 성공적으로 조회하였습니다."),
     GET_FRIEND_MEMOIR_SUCCESS(HttpStatus.OK , "친구의 회고를 성공적으로 조회하였습니다."),
-    MULTIPLE_MEMOIR_GET_SUCCESS(HttpStatus.OK , "주차별 회고 목록을 성공적으로 조회하였습니다."),
+    GET_MULTIPLE_MEMOIR_SUCCESS(HttpStatus.OK , "주차별 회고 목록을 성공적으로 조회하였습니다."),
+
+    GET_MYPAGE_SUCCESS(HttpStatus.OK , "마이페이지를 성공적으로 조회하였습니다."),
+    GET_MYPAGE_COMMUNITY_SUCCESS(HttpStatus.OK , "내가 쓴 글을 성공적으로 조회하였습니다."),
+    REJECT_MY_FRIEND_SUCCESS(HttpStatus.OK , "성공적으로 친구 관계를 삭제하였습니다."),
 
     //201 CREATED SUCCESS
-    MEMOIR_CREATE_SUCCESS(HttpStatus.CREATED, "성공적으로 회고를 등록하였습니다."),
+    CREATE_MEMOIR_SUCCESS(HttpStatus.CREATED, "성공적으로 회고를 등록하였습니다."),
+    UPDATE_MYPAGE_SUCCESS(HttpStatus.CREATED , "마이페이지를 성공적으로 수정하였습니다."),
+    ACCEPT_MY_FRIEND_SUCCESS(HttpStatus.CREATED , "성공적으로 친구 수락을 완료하였습니다. "),
     ;
 
 
