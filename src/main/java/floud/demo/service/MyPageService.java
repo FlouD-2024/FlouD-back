@@ -7,6 +7,7 @@ import floud.demo.domain.Goal;
 import floud.demo.domain.Users;
 import floud.demo.dto.mypage.MyGoal;
 import floud.demo.dto.mypage.MypageResponseDto;
+import floud.demo.dto.mypage.MypageUpdateRequestDto;
 import floud.demo.repository.GoalRepository;
 import floud.demo.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -51,5 +53,10 @@ public class MyPageService {
 
 
         return ApiResponse.success(Success.GET_MYPAGE_SUCCESS, responseDto);
+    }
+
+    public ApiResponse<?> updateMypage(MypageUpdateRequestDto requestDto){
+
+        return ApiResponse.success(Success.UPDATE_MYPAGE_SUCCESS, Map.of("nicknmae", requestDto.getNickname()));
     }
 }
