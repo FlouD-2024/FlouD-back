@@ -1,8 +1,13 @@
 package floud.demo.dto.friendship;
 
-import java.util.List;
+import lombok.Builder;
+import lombok.Getter;
 
+
+@Getter
+@Builder
 public class FriendshipDto {
-    private String nickname;
-    private List<FriendshipDto> friendshipList;
+    private String friend_nickname;
+    private Boolean memoir_status;
+    private Long memoir_id;
 }
