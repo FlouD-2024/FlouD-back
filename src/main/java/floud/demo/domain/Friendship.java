@@ -37,4 +37,8 @@ public class Friendship {
         this.from_user = from_user;
     }
 
+    public void updateStatus(FriendshipStatus friendshipStatus){
+        this.friendshipStatus = friendshipStatus;
+    }
+
 }
