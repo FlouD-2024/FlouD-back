@@ -36,6 +36,9 @@ public class Users extends BaseTimeEntity {
     @OneToMany(mappedBy = "users", fetch = FetchType.LAZY)
     private List<Memoir> memoirList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "users", fetch = FetchType.LAZY)
+    private List<Goal> goalList = new ArrayList<>();
+
     @Builder
     public Users(Long id, String social_id, String nickname, String introduction, String memo, List<Memoir> memoirList){
         this.Id = id;
