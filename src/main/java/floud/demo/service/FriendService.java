@@ -74,7 +74,7 @@ public class FriendService {
             return ApiResponse.failure(Error.FRIENDSHIP_ALREADY_EXIST);
         }
         //Create Friendship
-        Friendship newFriendship = requestDto.toEntity(users,friend);
+        Friendship newFriendship = requestDto.toEntity(friend, users);
         friendshipRepository.save(newFriendship);
 
         return ApiResponse.success(Success.REQUEST_FRIEND_SUCCESS, Map.of("friendship_id", newFriendship.getId()));
