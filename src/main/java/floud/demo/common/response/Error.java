@@ -13,10 +13,13 @@ public enum Error {
 
     // 404 NOT FOUND
     USERS_NOT_FOUND(HttpStatus.NOT_FOUND, "유저 정보를 찾을 수 없습니다."),
+    FRIEND_NICKNAME_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 닉네임의 회원을 찾을 수 없습니다."),
     MEMOIR_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 회고를 찾을 수 없습니다."),
 
     // 409 CONFLICT
     MEMOIR_ALREADY_EXIST(HttpStatus.CONFLICT, "이미 오늘의 회고를 작성하였습니다."),
+    FRIENDSHIP_ALREADY_EXIST(HttpStatus.CONFLICT, "이미 친구 관계가 존재합니다."),
+
 
     // 500 INTERNAL SERVER ERROR
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error"),
