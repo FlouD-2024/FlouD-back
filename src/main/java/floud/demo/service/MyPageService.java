@@ -48,8 +48,8 @@ public class MyPageService {
 
     @Transactional
     public ApiResponse<?> checkDuplicatedName(String nickname){
-
-        return ApiResponse.success(Success.SUCCESS);
+        boolean isDuplicated = usersRepository.existsByNickname(nickname);
+        return ApiResponse.success(Success.CHECK_NICKNAME_DUPLICATED, Map.of("isDuplicated", isDuplicated));
     }
 
     @Transactional
