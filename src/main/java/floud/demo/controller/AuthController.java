@@ -33,5 +33,8 @@ public class AuthController {
         return authService.getKakaoAccessToken(code);
     }
 
-
+    @GetMapping("/kakao/login")
+    public RedirectView redirectToKakao() {
+        return authService.redirectToKakao();
+    }
 }
