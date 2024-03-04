@@ -23,9 +23,15 @@ public class AuthController {
         return authService.getGoogleAccessToken(code);
     }
 
-    @GetMapping("/login")
+    @GetMapping("/google/login")
     public RedirectView redirectToGoogle() {
         return authService.redirectToGoogle();
     }
+
+    @GetMapping("/callback/kakao")
+    public ApiResponse<?> successKakaooLogin(@RequestParam("code") String code) {
+        return authService.getKakaoAccessToken(code);
+    }
+
 
 }
