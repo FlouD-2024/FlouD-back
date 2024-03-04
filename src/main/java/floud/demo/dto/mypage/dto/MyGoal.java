@@ -1,4 +1,4 @@
-package floud.demo.dto.mypage;
+package floud.demo.dto.mypage.dto;
 
 
 import lombok.Builder;

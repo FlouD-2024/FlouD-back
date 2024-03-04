@@ -1,6 +1,6 @@
 package floud.demo.dto.mypage;
 
-import floud.demo.domain.Goal;
+import floud.demo.dto.mypage.dto.UpdateGoal;
 import lombok.Getter;
 
 import java.util.List;

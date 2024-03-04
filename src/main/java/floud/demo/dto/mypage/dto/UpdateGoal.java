@@ -1,4 +1,4 @@
-package floud.demo.dto.mypage;
+package floud.demo.dto.mypage.dto;
 
 import floud.demo.domain.Goal;
 import floud.demo.domain.Users;

@@ -3,12 +3,16 @@ package floud.demo.service;
 import floud.demo.common.response.ApiResponse;
 import floud.demo.common.response.Error;
 import floud.demo.common.response.Success;
+import floud.demo.domain.Friendship;
 import floud.demo.domain.Goal;
 import floud.demo.domain.Users;
-import floud.demo.dto.mypage.MyGoal;
-import floud.demo.dto.mypage.MypageResponseDto;
-import floud.demo.dto.mypage.MypageUpdateRequestDto;
-import floud.demo.dto.mypage.UpdateGoal;
+import floud.demo.domain.enums.FriendshipStatus;
+import floud.demo.dto.mypage.*;
+import floud.demo.dto.mypage.dto.MyFriend;
+import floud.demo.dto.mypage.dto.MyGoal;
+import floud.demo.dto.mypage.dto.MyWaiting;
+import floud.demo.dto.mypage.dto.UpdateGoal;
+import floud.demo.repository.FriendshipRepository;
 import floud.demo.repository.GoalRepository;
 import floud.demo.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +31,12 @@ import java.util.stream.Collectors;
 public class MyPageService {
     private final UsersRepository usersRepository;
     private final GoalRepository goalRepository;
+    private final FriendshipRepository friendshipRepository;
+
+
+    /**
+     * 내 정보
+     **/
     @Transactional
     public ApiResponse<?> getMypage(){
         //Checking user
@@ -79,6 +89,76 @@ public class MyPageService {
                 .build());
     }
 
+    /**
+     * 친구 관리
+     **/
+    @Transactional
+    public ApiResponse<?> getFriendList(){
+        //Checking user
+        Optional<Users> optionalUsers = usersRepository.findById(1L);
+        if(optionalUsers.isEmpty())
+            return ApiResponse.failure(Error.USERS_NOT_FOUND);
+        Users users = optionalUsers.get();
+        log.info("유저 이름 -> {}", users.getNickname());
+
+        //Find Friend List
+        MypageFriendListResponseDto responseDto = findFriends(users);
+
+        return ApiResponse.success(Success.GET_FRIEND_LIST_SUCCESS,responseDto);
+    }
+
+    @Transactional
+    public ApiResponse<?> updateFriend(MypageFriendUpdateRequestDto requestDto){
+        //Checking user
+        Optional<Users> optionalUsers = usersRepository.findById(1L);
+        if(optionalUsers.isEmpty())
+            return ApiResponse.failure(Error.USERS_NOT_FOUND);
+        Users users = optionalUsers.get();
+        log.info("유저 이름 -> {}", users.getNickname());
+
+        //Find Friendship
+        Optional<Friendship> optionalFriendship = friendshipRepository.findById(requestDto.getFriendship_id());
+        if(optionalFriendship.isEmpty())
+            return ApiResponse.failure(Error.FRIENDSHIP_NOT_FOUND);
+        Friendship friendship = optionalFriendship.get();
+
+        //Check whether request nickname and friendship's from user nickname is matched
+        if(!friendship.getFrom_user().getNickname().equals(requestDto.getNickname()))
+            return ApiResponse.failure(Error.NOT_MATCHED_NICKNAME);
+
+        //Update Friendship
+        friendship.updateStatus(requestDto.getFriendshipStatus());
+
+        return ApiResponse.success(Success.UPDATE_FRIEND_SUCCESS, Map.of("nowStatus", friendship.getFriendshipStatus()));
+    }
+
+    @Transactional
+    public ApiResponse<?> deleteFriend(Long friendship_id){
+        //Checking user
+        Optional<Users> optionalUsers = usersRepository.findById(1L);
+        if(optionalUsers.isEmpty())
+            return ApiResponse.failure(Error.USERS_NOT_FOUND);
+        Users users = optionalUsers.get();
+        log.info("유저 이름 -> {}", users.getNickname());
+
+        //Find Friendship
+        Optional<Friendship> optionalFriendship = friendshipRepository.findById(friendship_id);
+        if(optionalFriendship.isEmpty())
+            return ApiResponse.failure(Error.FRIENDSHIP_NOT_FOUND);
+        Friendship friendship = optionalFriendship.get();
+
+        //Update Friendship
+        friendship.updateStatus(FriendshipStatus.REJECT);
+
+        return ApiResponse.success(Success.DELETE_FRIEND_SUCCESS, MypageFriendDeleteResponseDto.builder()
+                .friendship_id(friendship_id)
+                .to_user(friendship.getTo_user().getNickname())
+                .from_user(friendship.getFrom_user().getNickname())
+                .friendshipStatus(friendship.getFriendshipStatus())
+                .build());
+
+    }
+
     public List<MyGoal> setGoalList(Long users_id){
         List<Goal> goals = goalRepository.findAllByUserId(users_id);
         return goals.stream()
@@ -109,4 +189,50 @@ public class MyPageService {
         }
     }
 
+    public MypageFriendListResponseDto findFriends(Users me){
+        List<Friendship> waitingFriends = friendshipRepository.findAllByWaitingToUser(me.getId());
+        List<Friendship> acceptedFriends = friendshipRepository.findAllByUsersId(me.getId());
+
+        List<MyWaiting> myWaitingList = waitingFriends.stream()
+                .map(friendship -> buildMyWaiting(friendship, me))
+                .collect(Collectors.toList());
+
+        List<MyFriend> myFriendList = acceptedFriends.stream()
+                .map(friendship -> buildMyFriend(friendship, me))
+                .collect(Collectors.toList());
+
+        return MypageFriendListResponseDto.builder()
+                .waitingList(myWaitingList)
+                .myFriendList(myFriendList)
+                .build();
+    }
+
+    private MyWaiting buildMyWaiting(Friendship friendship, Users me) {
+        Users friend = getFriend(friendship, me);
+        return MyWaiting.builder()
+                .friendship_id(friendship.getId())
+                .nickname(friend.getNickname())
+                .friendshipStatus(friendship.getFriendshipStatus())
+                .introduction(friend.getIntroduction())
+                .build();
+    }
+
+    private MyFriend buildMyFriend(Friendship friendship, Users me) {
+        Users friend = getFriend(friendship, me);
+        return MyFriend.builder()
+                .friendship_id(friendship.getId())
+                .nickname(friend.getNickname())
+                .friendshipStatus(friendship.getFriendshipStatus())
+                .introduction(friend.getIntroduction())
+                .build();
+    }
+
+
+    private Users getFriend(Friendship friendship, Users me) {
+        if (friendship.getTo_user().equals(me)) {
+            return friendship.getFrom_user();
+        } else {
+            return friendship.getTo_user();
+        }
+    }
 }

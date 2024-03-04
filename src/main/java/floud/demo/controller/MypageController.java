@@ -1,9 +1,9 @@
 package floud.demo.controller;
 
 import floud.demo.common.response.ApiResponse;
+import floud.demo.dto.mypage.MypageFriendUpdateRequestDto;
 import floud.demo.dto.mypage.MypageUpdateRequestDto;
 import floud.demo.service.MyPageService;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,6 +16,7 @@ public class MypageController {
     public ApiResponse<?> getMypage(){
         return myPageService.getMypage();
     }
+
     @GetMapping("/check")
     public ApiResponse<?> checkDuplicatedName(@RequestParam(name = "nickname") String nickname){
         return  myPageService.checkDuplicatedName(nickname);
@@ -24,5 +25,20 @@ public class MypageController {
     @PutMapping
     public ApiResponse<?> updateMypage(@RequestBody MypageUpdateRequestDto mypageUpdateRequestDto) {
         return myPageService.updateMypage(mypageUpdateRequestDto);
+    }
+
+    @GetMapping("/friend")
+    public ApiResponse<?> getFriendList(){
+        return myPageService.getFriendList();
+    }
+
+    @PutMapping("/friend")
+    public ApiResponse<?> updateFriend(@RequestBody MypageFriendUpdateRequestDto requestDto){
+        return myPageService.updateFriend(requestDto);
+    }
+
+    @PutMapping("/friend/{friendship_id}")
+    public ApiResponse<?> deleteFriend(@PathVariable(name = "friendship_id") Long friendship_id){
+        return myPageService.deleteFriend(friendship_id);
     }
 }
