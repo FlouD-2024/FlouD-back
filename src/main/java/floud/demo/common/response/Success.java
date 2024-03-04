@@ -12,6 +12,8 @@ public enum Success {
     SUCCESS(HttpStatus.OK, "Request successfully processed"),
 
     //200 SUCCESS
+    GET_GOOGLE_ACCESS_TOKEN_SUCCESS(HttpStatus.OK , "구글 로그인 성공"),
+
     UPDATE_MEMOIR_SUCCESS(HttpStatus.OK , "성공적으로 회고를 수정하였습니다."),
     GET_MY_MEMOIR_SUCCESS(HttpStatus.OK , "나의 회고를 성공적으로 조회하였습니다."),
     GET_MULTIPLE_MEMOIR_SUCCESS(HttpStatus.OK , "주차별 회고 목록을 성공적으로 조회하였습니다."),
