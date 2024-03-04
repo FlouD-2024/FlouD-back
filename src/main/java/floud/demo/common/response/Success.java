@@ -13,6 +13,7 @@ public enum Success {
 
     //200 SUCCESS
     GET_GOOGLE_ACCESS_TOKEN_SUCCESS(HttpStatus.OK , "구글 로그인 성공"),
+    GET_KAKAO_ACCESS_TOKEN_SUCCESS(HttpStatus.OK , "카카오 로그인 성공"),
 
     UPDATE_MEMOIR_SUCCESS(HttpStatus.OK , "성공적으로 회고를 수정하였습니다."),
     GET_MY_MEMOIR_SUCCESS(HttpStatus.OK , "나의 회고를 성공적으로 조회하였습니다."),
