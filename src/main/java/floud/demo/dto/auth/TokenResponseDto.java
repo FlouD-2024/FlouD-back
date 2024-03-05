@@ -10,7 +10,7 @@ import lombok.*;
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TokenResponseDto {
-    private String access_token;
+    private String id_token;
     private String refresh_token;
 
 }
