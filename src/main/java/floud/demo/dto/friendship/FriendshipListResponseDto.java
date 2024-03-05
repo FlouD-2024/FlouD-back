@@ -9,5 +9,7 @@ import java.util.List;
 @Builder
 public class FriendshipListResponseDto {
     private String my_nickname;
+    private Long totalFriendNum;
+    private Long totalPage;
     private List<FriendshipDto> friendshipList;
 }
