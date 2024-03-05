@@ -11,11 +11,13 @@ import floud.demo.dto.auth.TokenResponseDto;
 import floud.demo.dto.auth.UsersResponseDto;
 import floud.demo.repository.UsersRepository;
 import io.jsonwebtoken.io.Decoders;
+import jakarta.annotation.Resource;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -23,11 +25,12 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.view.RedirectView;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -162,6 +165,7 @@ public class AuthService {
                 .users_id(getUser.getId())
                 .email(getUser.getEmail())
                 .social_id(getUser.getSocial_id())
+                .nickname(getUser.getNickname())
                 .build();
 
         return ApiResponse.success(Success.GET_USER_INFO_SUCCESS, usersInfoResponse);
@@ -223,10 +227,21 @@ public class AuthService {
                 .orElseThrow(() -> new EntityNotFoundException("Member not found"));
     }
 
+    private List<String> loadWordsFromFile() throws IOException {
+        ClassPathResource resource = new ClassPathResource("random_nickname.txt");
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(resource.getInputStream()))) {
+            return reader.lines().collect(Collectors.toList());
+        }
+    }
     private String generateUniqueNickname() {
-        String[] words = {"슈퍼굳건이", "포근한공간", "그레이무드등", "행복한하루", "회고전문가"};
-        String selectedWord = words[new Random().nextInt(words.length)];
-        int randomSuffix = (int) (Math.random() * 1000);
-        return selectedWord + randomSuffix;
+        try {
+            List<String> words = loadWordsFromFile();
+            String selectedWord = words.get(new Random().nextInt(words.size()));
+            int randomSuffix = (int) (Math.random() * 1000);
+            return selectedWord + randomSuffix;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }
