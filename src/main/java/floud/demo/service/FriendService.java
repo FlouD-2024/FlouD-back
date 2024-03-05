@@ -6,6 +6,7 @@ import floud.demo.common.response.Success;
 import floud.demo.domain.Friendship;
 import floud.demo.domain.Memoir;
 import floud.demo.domain.Users;
+import floud.demo.dto.friendship.FindFriendResponseDto;
 import floud.demo.dto.friendship.FriendshipCreateRequestDto;
 import floud.demo.dto.friendship.FriendshipDto;
 import floud.demo.dto.friendship.FriendshipListResponseDto;
@@ -36,7 +37,23 @@ public class FriendService {
 
     @Transactional
     public ApiResponse<?> findFriend(String nickname){
-        return ApiResponse.success(Success.SUCCESS);
+        //Checking user
+        Optional<Users> optionalUsers = usersRepository.findById(1L);
+        if(optionalUsers.isEmpty())
+            return ApiResponse.failure(Error.USERS_NOT_FOUND);
+        Users users = optionalUsers.get();
+        log.info("유저 이름 -> {}", users.getNickname());
+
+        Optional<Users> optionalFriend = usersRepository.findByNickname(nickname);
+        if(optionalFriend.isEmpty())
+            return ApiResponse.failure(Error.FRIEND_NICKNAME_NOT_FOUND);
+        Users friend = optionalUsers.get();
+
+        return ApiResponse.success(Success.FIND_FRIEND_SUCCESS, FindFriendResponseDto.builder()
+                .nickname(friend.getNickname())
+                .email(friend.getEmail())
+                .introduction(friend.getIntroduction())
+                .build());
     }
 
     @Transactional
