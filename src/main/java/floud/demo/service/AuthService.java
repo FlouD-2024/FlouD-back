@@ -27,6 +27,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -211,6 +212,7 @@ public class AuthService {
                 },
                 () -> {
                     Users newUser = dto.toEntity();
+                    newUser.setNickname(generateUniqueNickname()); // 랜덤 닉네임 생성 및 저장
                     System.out.println("새 멤버 저장됨: " + newUser);
                     usersRepository.save(newUser);
                 }
@@ -219,5 +221,12 @@ public class AuthService {
     public Users findUserBySocial_id(String social_id) {
         return usersRepository.findBySocial_id(social_id)
                 .orElseThrow(() -> new EntityNotFoundException("Member not found"));
+    }
+
+    private String generateUniqueNickname() {
+        String[] words = {"슈퍼굳건이", "포근한공간", "그레이무드등", "행복한하루", "회고전문가"};
+        String selectedWord = words[new Random().nextInt(words.length)];
+        int randomSuffix = (int) (Math.random() * 1000);
+        return selectedWord + randomSuffix;
     }
 }
