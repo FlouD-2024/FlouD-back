@@ -35,6 +35,11 @@ public class FriendService {
 
 
     @Transactional
+    public ApiResponse<?> findFriend(String nickname){
+        return ApiResponse.success(Success.SUCCESS);
+    }
+
+    @Transactional
     public ApiResponse<?> getFriendsInfo(LocalDate date){
         //Checking user
         Optional<Users> optionalUsers = usersRepository.findById(1L);
