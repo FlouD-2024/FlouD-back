@@ -4,16 +4,14 @@ import floud.demo.common.domain.BaseTimeEntity;
 import floud.demo.domain.Memoir;
 import jakarta.persistence.*;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
 @Getter
+@Setter
 @Entity
 public class Users extends BaseTimeEntity {
     @Id
