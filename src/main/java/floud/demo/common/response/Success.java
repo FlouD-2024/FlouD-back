@@ -27,6 +27,7 @@ public enum Success {
     REJECT_MY_FRIEND_SUCCESS(HttpStatus.OK , "성공적으로 친구 관계를 삭제하였습니다."),
     CHECK_NICKNAME_DUPLICATED(HttpStatus.OK , "성공적으로 닉네임 중복을 확인하였습니다."),
 
+    FIND_FRIEND_SUCCESS(HttpStatus.OK , "성공적으로 친구를 검색하였습니다."),
     GET_FRIEND_LIST_SUCCESS(HttpStatus.OK , "나의 친구 목록을 성공적으로 조회하였습니다."),
     GET_FRIEND_MEMOIR_SUCCESS(HttpStatus.OK , "친구의 회고를 성공적으로 조회하였습니다."),
     DELETE_FRIEND_SUCCESS(HttpStatus.OK , "친구를 성공적으로 삭제하였습니다."),
