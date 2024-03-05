@@ -18,6 +18,7 @@ public enum Error {
     MEMOIR_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 회고를 찾을 수 없습니다."),
 
     // 409 CONFLICT
+    NOT_BE_FRIEND_MYSELF(HttpStatus.CONFLICT, "본인과는 친구가 될 수 없습니다."),
     MEMOIR_ALREADY_EXIST(HttpStatus.CONFLICT, "이미 오늘의 회고를 작성하였습니다."),
     FRIENDSHIP_ALREADY_EXIST(HttpStatus.CONFLICT, "이미 친구 관계가 존재합니다."),
     NOT_MATCHED_NICKNAME(HttpStatus.CONFLICT, "친구 관계 정보가 일치하지 않습니다."),
