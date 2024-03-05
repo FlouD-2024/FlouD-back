@@ -45,9 +45,12 @@ public class FriendService {
 
         //친구 정보 가져오기
         List<FriendshipDto> friendshipList = findFriendInfo(users, date);
+        Integer totalFriendNum = friendshipList.size();
 
         return ApiResponse.success(Success.GET_FRIEND_LIST_SUCCESS, FriendshipListResponseDto.builder()
                         .my_nickname(users.getNickname())
+                        .totalFriendNum(totalFriendNum)
+                        .totalPage()
                         .friendshipList(friendshipList)
                         .build());
     }
