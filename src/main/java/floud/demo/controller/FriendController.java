@@ -14,6 +14,11 @@ import java.time.LocalDate;
 public class FriendController {
     private final FriendService friendService;
 
+    @GetMapping("")
+    public ApiResponse<?> findFriend(@RequestParam(name = "nickname") String nickname){
+        return friendService.findFriend(nickname);
+    }
+
     @GetMapping("/my")
     public ApiResponse<?> getFriendsInfo(@RequestParam(name = "date") LocalDate date){
         return friendService.getFriendsInfo(date);
