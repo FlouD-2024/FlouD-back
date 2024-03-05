@@ -50,7 +50,7 @@ public class FriendService {
         return ApiResponse.success(Success.GET_FRIEND_LIST_SUCCESS, FriendshipListResponseDto.builder()
                         .my_nickname(users.getNickname())
                         .totalFriendNum(totalFriendNum)
-                        .totalPage()
+                        .totalPage(totalFriendNum/8+1)
                         .friendshipList(friendshipList)
                         .build());
     }
