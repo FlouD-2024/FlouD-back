@@ -44,10 +44,13 @@ public class FriendService {
         Users users = optionalUsers.get();
         log.info("유저 이름 -> {}", users.getNickname());
 
+        if(nickname.equals(users.getNickname()))
+            return ApiResponse.failure(Error.NOT_BE_FRIEND_MYSELF);
+
         Optional<Users> optionalFriend = usersRepository.findByNickname(nickname);
         if(optionalFriend.isEmpty())
             return ApiResponse.failure(Error.FRIEND_NICKNAME_NOT_FOUND);
-        Users friend = optionalUsers.get();
+        Users friend = optionalFriend.get();
 
         return ApiResponse.success(Success.FIND_FRIEND_SUCCESS, FindFriendResponseDto.builder()
                 .nickname(friend.getNickname())
