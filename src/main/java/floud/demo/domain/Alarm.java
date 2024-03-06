@@ -20,12 +20,15 @@ public class Alarm extends BaseTimeEntity {
     private Users users;
 
     @Column(nullable = false)
+    private String nickname;
+
+    @Column(nullable = false)
     private String message;
 
     @Builder
-    public Alarm(Long id, Users users, String message){
-        this.id = id;
+    public Alarm(Users users, String nickname, String message){
         this.users = users;
+        this.nickname = nickname;
         this.message = message;
     }
 }
