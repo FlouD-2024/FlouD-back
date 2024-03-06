@@ -130,8 +130,7 @@ public class MemoirService {
         List<Users> friendList = findMyFriendList(user);
         for (Users friend : friendList) {
             String message = "최근 회고를 작성했습니다.";
-            Alarm alarm = new Alarm(friend, user.getNickname(), message);
-            alarmRepository.save(alarm);
+            alarmRepository.save(new Alarm(friend, user.getNickname(), message));
         }
     }
 
