@@ -3,6 +3,7 @@ package floud.demo.service;
 import floud.demo.common.response.ApiResponse;
 import floud.demo.common.response.Error;
 import floud.demo.common.response.Success;
+import floud.demo.domain.Alarm;
 import floud.demo.domain.Friendship;
 import floud.demo.domain.Memoir;
 import floud.demo.domain.Users;
@@ -11,6 +12,7 @@ import floud.demo.dto.friendship.FriendshipCreateRequestDto;
 import floud.demo.dto.friendship.FriendshipDto;
 import floud.demo.dto.friendship.FriendshipListResponseDto;
 import floud.demo.dto.memoir.OneMemoirResponseDto;
+import floud.demo.repository.AlarmRepository;
 import floud.demo.repository.FriendshipRepository;
 import floud.demo.repository.MemoirRepository;
 import floud.demo.repository.UsersRepository;
@@ -34,6 +36,7 @@ public class FriendshipService {
     private final UsersRepository usersRepository;
     private final MemoirRepository memoirRepository;
     private final FriendshipRepository friendshipRepository;
+    private final AlarmRepository alarmRepository;
 
 
     @Transactional
@@ -87,9 +90,13 @@ public class FriendshipService {
         if (existingFriendship.isPresent()) {
             return ApiResponse.failure(Error.FRIENDSHIP_ALREADY_EXIST);
         }
+
         //Create Friendship
         Friendship newFriendship = requestDto.toEntity(friend, users);
         friendshipRepository.save(newFriendship);
+
+        //Create Alarm
+        createAlarm(users, friend);
 
         return ApiResponse.success(Success.REQUEST_FRIEND_SUCCESS, Map.of("friendship_id", newFriendship.getId()));
     }
@@ -115,6 +122,11 @@ public class FriendshipService {
                 .created_at(memoir.getCreated_at())
                 .build());
 
+    }
+
+    private void createAlarm(Users from_user, Users to_user){
+        String message = "친구 신청이 왔습니다.";
+        alarmRepository.save(new Alarm(to_user, from_user.getNickname(), message));
     }
 
     public List<FriendshipDto> findFriendInfo(Users me, LocalDate date){
