@@ -28,7 +28,7 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class FriendService {
+public class FriendshipService {
 
     private final AuthService authService;
     private final UsersRepository usersRepository;

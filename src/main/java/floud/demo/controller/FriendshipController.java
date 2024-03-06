@@ -2,7 +2,7 @@ package floud.demo.controller;
 
 import floud.demo.common.response.ApiResponse;
 import floud.demo.dto.friendship.FriendshipCreateRequestDto;
-import floud.demo.service.FriendService;
+import floud.demo.service.FriendshipService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,8 +11,8 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/friend")
-public class FriendController {
-    private final FriendService friendService;
+public class FriendshipController {
+    private final FriendshipService friendService;
 
     @GetMapping("")
     public ApiResponse<?> findFriend(@RequestHeader(value="Authorization") String authorizationHeader, @RequestParam(name = "nickname") String nickname){
