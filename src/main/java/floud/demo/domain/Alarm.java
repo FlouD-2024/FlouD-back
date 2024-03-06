@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @Entity
-public class Notification extends BaseTimeEntity {
+public class Alarm extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "notification_id")
@@ -23,7 +23,7 @@ public class Notification extends BaseTimeEntity {
     private String message;
 
     @Builder
-    public Notification(Long id, Users users, String message){
+    public Alarm(Long id, Users users, String message){
         this.id = id;
         this.users = users;
         this.message = message;
