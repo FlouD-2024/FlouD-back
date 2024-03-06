@@ -252,7 +252,7 @@ public class AuthService {
         }
     }
 
-    public RefreshTokenResponseDto reissueTokenByRefresh(String refreshToken) {
+    public RefreshTokenResponseDto reissueKakaoByRefresh(String refreshToken) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
@@ -273,11 +273,36 @@ public class AuthService {
                 new ParameterizedTypeReference<Map<String, String>>() {}
         );
 
-        RefreshTokenResponseDto refreshTokenResponseDto = RefreshTokenResponseDto.builder()
+        return RefreshTokenResponseDto.builder()
                 .id_token(responseEntity.getBody().get("id_token"))
                 .refresh_token(responseEntity.getBody().get("refresh_token"))
                 .build();
-        return refreshTokenResponseDto;
+    }
 
+    public RefreshTokenResponseDto reissueGoogleByRefresh(String refreshToken) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+
+        params.add("refresh_token", refreshToken);
+        params.add("grant_type", "refresh_token");
+        params.add("client_id", GOOGLE_CLIENT_ID);
+        params.add("client_secret", GOOGLE_CLIENT_SECRET);
+
+        // 헤더와 파라미터를 합쳐서 요청 엔터티 생성
+        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(params, headers);
+
+        ResponseEntity<Map<String, String>> responseEntity = new RestTemplate().exchange(
+                GOOGLE_TOKEN_URL,
+                HttpMethod.POST,
+                requestEntity,
+                new ParameterizedTypeReference<Map<String, String>>() {}
+        );
+
+        return RefreshTokenResponseDto.builder()
+                .id_token(responseEntity.getBody().get("id_token"))
+                .refresh_token(responseEntity.getBody().get("refresh_token"))
+                .build();
     }
 }

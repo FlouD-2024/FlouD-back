@@ -45,9 +45,15 @@ public class AuthController {
         return ApiResponse.success(Success.GET_USER_INFO_SUCCESS, getUser);
     }
 
-    @PostMapping("/refresh")
-    public ApiResponse<?> getTokenByRefreshToken(@RequestParam("refresh_token") String refreshToken) {
-        RefreshTokenResponseDto result = authService.reissueTokenByRefresh(refreshToken);
+    @PostMapping("/kakao/refresh")
+    public ApiResponse<?> getKakaoByRefreshToken(@RequestParam("refresh_token") String refreshToken) {
+        RefreshTokenResponseDto result = authService.reissueKakaoByRefresh(refreshToken);
+        return ApiResponse.success(Success.GET_REISSUE_ACCESS_TOKEN_SUCCESS,result);
+    }
+
+    @PostMapping("/google/refresh")
+    public ApiResponse<?> getGoogleByRefreshToken(@RequestParam("refresh_token") String refreshToken) {
+        RefreshTokenResponseDto result = authService.reissueGoogleByRefresh(refreshToken);
         return ApiResponse.success(Success.GET_REISSUE_ACCESS_TOKEN_SUCCESS,result);
     }
 }
