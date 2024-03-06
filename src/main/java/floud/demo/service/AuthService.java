@@ -38,6 +38,9 @@ public class AuthService {
 
     @Autowired
     private final UsersRepository usersRepository;
+
+    @Autowired
+    private final RedisService redisService;
     private final String GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token";
     private final String KAKAO_TOKEN_URL = "https://kauth.kakao.com/oauth/token";
 
@@ -94,7 +97,10 @@ public class AuthService {
 
                 String id_token = tokenResponseDto.getId_token();
                 String refreshToken = tokenResponseDto.getRefresh_token();
-                getUserInfo(id_token);
+
+                // redis에 refresh token을 저장함
+                UsersResponseDto userInfo = getUserInfo(id_token);
+                redisService.saveRefreshToken(userInfo.getUsers_id(),refreshToken);
 
                 return ApiResponse.success(Success.GET_GOOGLE_ACCESS_TOKEN_SUCCESS, TokenResponseDto.builder()
                         .id_token(id_token)
@@ -150,7 +156,9 @@ public class AuthService {
                 String id_token = tokenResponseDto.getId_token();
                 String refreshToken = tokenResponseDto.getRefresh_token();
 
-                getUserInfo(id_token);
+                // redis에 refresh token을 저장함
+                UsersResponseDto userInfo = getUserInfo(id_token);
+                redisService.saveRefreshToken(userInfo.getUsers_id(),refreshToken);
 
                 return ApiResponse.success(Success.GET_KAKAO_ACCESS_TOKEN_SUCCESS, TokenResponseDto.builder()
                         .id_token(id_token)
@@ -195,6 +203,8 @@ public class AuthService {
         SocialLoginDecodeResponseDto userinfo = decodeToken(token); // 1. 토큰 통해 social ID 가져옴
         Users getUser = findUserBySocial_id(userinfo.getSocial_id()); // 2. 유저가 없으면 DB에 없다는 것임
         Users newUser = new Users();
+
+        // 유저가 없으면 저장함
         if (getUser == null) {
             newUser.setEmail(userinfo.getEmail());
             newUser.setSocial_id(userinfo.getSocial_id());
@@ -207,6 +217,7 @@ public class AuthService {
                     .social_id(newUser.getSocial_id())
                     .build();
         }
+        // 유저가 있으면 해당 유저를 반환함
         return UsersResponseDto.builder()
                 .users_id(getUser.getId())
                 .nickname(getUser.getNickname())
