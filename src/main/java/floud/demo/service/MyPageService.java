@@ -110,6 +110,8 @@ public class MyPageService {
         //Check whether request nickname and friendship's from user nickname is matched
         if(!friendship.getFrom_user().getNickname().equals(requestDto.getNickname()))
             return ApiResponse.failure(Error.NOT_MATCHED_NICKNAME);
+        if(!friendship.getTo_user().getNickname().equals(users.getNickname()))
+            return ApiResponse.failure(Error.NOT_MATCHED_NICKNAME);
 
         //Update Friendship
         friendship.updateStatus(requestDto.getFriendshipStatus());
@@ -127,6 +129,12 @@ public class MyPageService {
         if(optionalFriendship.isEmpty())
             return ApiResponse.failure(Error.FRIENDSHIP_NOT_FOUND);
         Friendship friendship = optionalFriendship.get();
+
+        //Check is user's friendship
+        Users to_user = friendship.getTo_user();
+        Users from_user = friendship.getFrom_user();
+        if(!to_user.equals(users)||!from_user.equals(users))
+            return ApiResponse.failure(Error.NOT_MATCHED_NICKNAME);
 
         //Update Friendship
         friendship.updateStatus(FriendshipStatus.REJECT);
