@@ -7,6 +7,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import floud.demo.common.response.ApiResponse;
 import floud.demo.common.response.Success;
 import floud.demo.domain.Users;
+import floud.demo.dto.auth.RefreshTokenResponseDto;
+import floud.demo.dto.auth.SocialLoginDecodeResponseDto;
 import floud.demo.dto.auth.TokenResponseDto;
 import floud.demo.dto.auth.UsersResponseDto;
 import floud.demo.repository.UsersRepository;
@@ -71,6 +73,9 @@ public class AuthService {
         return new RedirectView(url);
     }
 
+    /**
+     * 구글 로그인시 id_token 발급하는 메소드
+     */
 
     public ApiResponse<?> getGoogleAccessToken(String code) {
         RestTemplate restTemplate = new RestTemplate();
@@ -89,11 +94,12 @@ public class AuthService {
                 ObjectMapper objectMapper = new ObjectMapper();
                 TokenResponseDto tokenResponseDto = objectMapper.readValue(responseEntity.getBody(), TokenResponseDto.class);
 
-                String idToken = tokenResponseDto.getId_token();
+                String id_token = tokenResponseDto.getId_token();
                 String refreshToken = tokenResponseDto.getRefresh_token();
+                getUserInfo(id_token);
 
                 return ApiResponse.success(Success.GET_GOOGLE_ACCESS_TOKEN_SUCCESS, TokenResponseDto.builder()
-                        .id_token(idToken)
+                        .id_token(id_token)
                         .refresh_token(refreshToken)
                         .build());
             } else {
@@ -105,6 +111,9 @@ public class AuthService {
         }
     }
 
+    /**
+     * 백엔드 테스트를 위한 redirect view api
+     */
     public RedirectView redirectToKakao() {
         String url = KAKAO_BASE_URI + "?client_id=" + KAKAO_CLIENT_ID +
                 "&response_type=code" +
@@ -113,6 +122,10 @@ public class AuthService {
         System.out.println("url = " + url);
         return new RedirectView(url);
     }
+
+    /**
+     * 카카오 로그인시 id_token 발급하는 메소드
+     */
 
     public ApiResponse<?> getKakaoAccessToken(String code) {
         RestTemplate restTemplate = new RestTemplate();
@@ -131,7 +144,6 @@ public class AuthService {
 
         try {
             ResponseEntity<String> responseEntity = restTemplate.postForEntity(KAKAO_TOKEN_URL, request, String.class);
-            System.out.println("responseEntity = " + responseEntity);
 
             if (responseEntity.getStatusCode() == HttpStatus.OK) {
                 ObjectMapper objectMapper = new ObjectMapper();
@@ -139,6 +151,8 @@ public class AuthService {
 
                 String id_token = tokenResponseDto.getId_token();
                 String refreshToken = tokenResponseDto.getRefresh_token();
+
+                getUserInfo(id_token);
 
                 return ApiResponse.success(Success.GET_KAKAO_ACCESS_TOKEN_SUCCESS, TokenResponseDto.builder()
                         .id_token(id_token)
@@ -153,37 +167,50 @@ public class AuthService {
         }
     }
 
-    public ApiResponse<?> getUserInfoByToken(String authorizationHeader) {
-
-        System.out.println("authorizationHeader = " + authorizationHeader);
+    public SocialLoginDecodeResponseDto getUserSocialInfo(String authorizationHeader) {
 
         String token = authorizationHeader.substring("Bearer ".length());
-        UsersResponseDto userinfo = decodeToken(token);
-        Users getUser = findUserBySocial_id(userinfo.getSocial_id());
-        System.out.println("getUser = " + getUser);
-        UsersResponseDto usersInfoResponse = userinfo.builder()
+        SocialLoginDecodeResponseDto socialUserinfo = decodeToken(token); // id_token으로 유저 정보를 가져옴 -> 1. social_id 2. email
+        if (socialUserinfo == null) return null;
+
+        return socialUserinfo.builder()
+                .email(socialUserinfo.getEmail())
+                .social_id(socialUserinfo.getSocial_id())
+                .build();
+    }
+
+    public UsersResponseDto getUserInfo(String authorizationHeader) {
+
+        String token = authorizationHeader.substring("Bearer ".length());
+        SocialLoginDecodeResponseDto userinfo = decodeToken(token); // 1. 토큰 통해 social ID 가져옴
+        Users getUser = findUserBySocial_id(userinfo.getSocial_id()); // 2. 유저가 없으면 DB에 없다는 것임
+        Users newUser = new Users();
+        if (getUser == null) {
+            newUser.setEmail(userinfo.getEmail());
+            newUser.setSocial_id(userinfo.getSocial_id());
+            newUser.setNickname(generateUniqueNickname());
+            usersRepository.save(newUser);
+            return UsersResponseDto.builder()
+                    .users_id(newUser.getId())
+                    .nickname(newUser.getNickname())
+                    .email(newUser.getEmail())
+                    .social_id(newUser.getSocial_id())
+                    .build();
+        }
+        return UsersResponseDto.builder()
                 .users_id(getUser.getId())
+                .nickname(getUser.getNickname())
                 .email(getUser.getEmail())
                 .social_id(getUser.getSocial_id())
                 .nickname(getUser.getNickname())
                 .build();
-
-        return ApiResponse.success(Success.GET_USER_INFO_SUCCESS, usersInfoResponse);
     }
 
-    public Users findUserByToken(String authorizationHeader) {
 
-        System.out.println("authorizationHeader = " + authorizationHeader);
-
-        String token = authorizationHeader.substring("Bearer ".length());
-        UsersResponseDto userinfo = decodeToken(token);
-        Users getUser = findUserBySocial_id(userinfo.getSocial_id());
-        System.out.println("getUser = " + getUser);
-
-        return getUser;
-    }
-
-    public UsersResponseDto decodeToken(String token) {
+    /**
+     * 해당 메소드는 토큰에서 유저 정보를 가져오는 것이다.
+     */
+    public SocialLoginDecodeResponseDto decodeToken(String token) {
         String decode = decryptBase64UrlToken(token.split("\\.")[1]);
         System.out.println("decode = " + decode);
         return transJsonToMemberInfoDto(decode);
@@ -194,12 +221,10 @@ public class AuthService {
         return new String(decode, StandardCharsets.UTF_8);
     }
 
-    public UsersResponseDto transJsonToMemberInfoDto(String json) {
+    public SocialLoginDecodeResponseDto transJsonToMemberInfoDto(String json) {
         try {
             ObjectMapper mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            UsersResponseDto dto = mapper.readValue(json, UsersResponseDto.class);
-            System.out.println("UsersRespone로 변경= " + dto);
-            saveMemberInfo(dto);
+            SocialLoginDecodeResponseDto dto = mapper.readValue(json, SocialLoginDecodeResponseDto.class);
             return dto;
         } catch (JsonMappingException e) {
             throw new RuntimeException(e);
@@ -208,35 +233,9 @@ public class AuthService {
         }
     }
 
-    @Transactional
-    public void saveMemberInfo(UsersResponseDto dto) {
-        try {
-            Optional<Users> user = usersRepository.findBySocial_id(dto.getSocial_id());
-            System.out.println("멤버 조회");
-            System.out.println("OAuth ID: " + dto.getSocial_id());
-            System.out.println("member 존재 여부: " + user.isPresent());
-            processMember(user, dto);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
-    private void processMember(Optional<Users> users, UsersResponseDto dto) {
-        users.ifPresentOrElse(
-                existingUser -> {
-                    System.out.println("유저가 이미 존재합니다: " + existingUser);
-                },
-                () -> {
-                    Users newUser = dto.toEntity();
-                    newUser.setNickname(generateUniqueNickname()); // 랜덤 닉네임 생성 및 저장
-                    System.out.println("새 멤버 저장됨: " + newUser);
-                    usersRepository.save(newUser);
-                }
-        );
-    }
     public Users findUserBySocial_id(String social_id) {
-        return usersRepository.findBySocial_id(social_id)
-                .orElseThrow(() -> new EntityNotFoundException("Member not found"));
+        return usersRepository.findBySocial_id(social_id).orElse(null);
     }
 
     private List<String> loadWordsFromFile() throws IOException {
@@ -255,5 +254,60 @@ public class AuthService {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public RefreshTokenResponseDto reissueKakaoByRefresh(String refreshToken) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+
+        params.add("refresh_token", refreshToken);
+        params.add("grant_type", "refresh_token");
+        params.add("client_id", KAKAO_CLIENT_ID);
+        params.add("client_secret", KAKAO_CLIENT_SECRET);
+
+        // 헤더와 파라미터를 합쳐서 요청 엔터티 생성
+        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(params, headers);
+
+        ResponseEntity<Map<String, String>> responseEntity = new RestTemplate().exchange(
+                KAKAO_TOKEN_URL,
+                HttpMethod.POST,
+                requestEntity,
+                new ParameterizedTypeReference<Map<String, String>>() {}
+        );
+
+        return RefreshTokenResponseDto.builder()
+                .id_token(responseEntity.getBody().get("id_token"))
+                .refresh_token(responseEntity.getBody().get("refresh_token"))
+                .build();
+    }
+
+
+    public RefreshTokenResponseDto reissueGoogleByRefresh(String refreshToken) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+
+        params.add("refresh_token", refreshToken);
+        params.add("grant_type", "refresh_token");
+        params.add("client_id", GOOGLE_CLIENT_ID);
+        params.add("client_secret", GOOGLE_CLIENT_SECRET);
+
+        // 헤더와 파라미터를 합쳐서 요청 엔터티 생성
+        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(params, headers);
+
+        ResponseEntity<Map<String, String>> responseEntity = new RestTemplate().exchange(
+                GOOGLE_TOKEN_URL,
+                HttpMethod.POST,
+                requestEntity,
+                new ParameterizedTypeReference<Map<String, String>>() {}
+        );
+
+        return RefreshTokenResponseDto.builder()
+                .id_token(responseEntity.getBody().get("id_token"))
+                .refresh_token(responseEntity.getBody().get("refresh_token"))
+                .build();
     }
 }
