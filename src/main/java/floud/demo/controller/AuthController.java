@@ -2,7 +2,10 @@ package floud.demo.controller;
 
 import floud.demo.common.response.ApiResponse;
 import floud.demo.common.response.Success;
+<<<<<<< HEAD
 import floud.demo.dto.auth.RefreshTokenResponseDto;
+=======
+>>>>>>> 7055982 (refactor: modify get user information api)
 import floud.demo.dto.auth.SocialLoginDecodeResponseDto;
 import floud.demo.dto.auth.UsersResponseDto;
 import floud.demo.service.AuthService;
