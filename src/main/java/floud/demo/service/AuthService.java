@@ -13,12 +13,10 @@ import floud.demo.dto.auth.TokenResponseDto;
 import floud.demo.dto.auth.UsersResponseDto;
 import floud.demo.repository.UsersRepository;
 import io.jsonwebtoken.io.Decoders;
-import jakarta.annotation.Resource;
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -177,6 +175,18 @@ public class AuthService {
                 .email(socialUserinfo.getEmail())
                 .social_id(socialUserinfo.getSocial_id())
                 .build();
+    }
+
+    public Users findUserByToken(String authorizationHeader) {
+
+        System.out.println("authorizationHeader = " + authorizationHeader);
+
+        String token = authorizationHeader.substring("Bearer ".length());
+        SocialLoginDecodeResponseDto userinfo = decodeToken(token);
+        Users getUser = findUserBySocial_id(userinfo.getSocial_id());
+        System.out.println("getUser = " + getUser);
+
+        return getUser;
     }
 
     public UsersResponseDto getUserInfo(String authorizationHeader) {
