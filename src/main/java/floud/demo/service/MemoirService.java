@@ -23,35 +23,29 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Service
 public class MemoirService {
-    private final UsersRepository usersRepository;
+    private final AuthService authService;
     private final MemoirRepository memoirRepository;
 
     @Transactional
-    public ApiResponse<?> createMemoir(MemoirCreateRequestDto memoirCreateRequestDto){
-        //Checking user
-        Optional<Users> users = usersRepository.findById(1L);
-        if(users.isEmpty())
-            return ApiResponse.failure(Error.USERS_NOT_FOUND);
-        log.info("유저 이름 -> {}", users.get().getNickname());
+    public ApiResponse<?> createMemoir(String authorizationHeader, MemoirCreateRequestDto memoirCreateRequestDto){
+        //Get user
+        Users users = authService.findUserByToken(authorizationHeader);
 
         //Check whether user posts today's memoir
         LocalDate now = LocalDate.now();
-        if(memoirRepository.existsByUserAndCreatedAtBetween(users.get().getId(), now))
+        if(memoirRepository.existsByUserAndCreatedAtBetween(users.getId(), now))
             return ApiResponse.failure(Error.MEMOIR_ALREADY_EXIST);
 
         //Create Memoir
-        Memoir newMemoir = memoirCreateRequestDto.toEntity(users.get());
+        Memoir newMemoir = memoirCreateRequestDto.toEntity(users);
         memoirRepository.save(newMemoir);
         return ApiResponse.success(Success.CREATE_MEMOIR_SUCCESS, Map.of("memoir_id", newMemoir.getId()));
     }
 
     @Transactional
-    public ApiResponse<?> updateMemoir(Long memoir_id, MemoirUpdateRequestDto memoirUpdateRequestDto){
-        //Checking user
-        Optional<Users> users = usersRepository.findById(1L);
-        if(users.isEmpty())
-            return ApiResponse.failure(Error.USERS_NOT_FOUND);
-        log.info("유저 이름 -> {}", users.get().getNickname());
+    public ApiResponse<?> updateMemoir(String authorizationHeader, Long memoir_id, MemoirUpdateRequestDto memoirUpdateRequestDto){
+        //Get user
+        Users users = authService.findUserByToken(authorizationHeader);
 
         //Checking memoir
         Optional<Memoir> optionalMemoir = memoirRepository.findById(memoir_id);
@@ -66,15 +60,12 @@ public class MemoirService {
     }
 
     @Transactional
-    public ApiResponse<?> getOneMemoir(LocalDate dateTime){
-        //Checking user
-        Optional<Users> users = usersRepository.findById(1L);
-        if(users.isEmpty())
-            return ApiResponse.failure(Error.USERS_NOT_FOUND);
-        log.info("유저 이름 -> {}", users.get().getNickname());
+    public ApiResponse<?> getOneMemoir(String authorizationHeader, LocalDate dateTime){
+        //Get user
+        Users users = authService.findUserByToken(authorizationHeader);
 
         //Check whether user posts today's memoir
-        Optional<Memoir> optionalMemoir = memoirRepository.findByCreatedAt(users.get().getId(), dateTime);
+        Optional<Memoir> optionalMemoir = memoirRepository.findByCreatedAt(users.getId(), dateTime);
 
         if(optionalMemoir.isEmpty())
             return ApiResponse.failure(Error.MEMOIR_NOT_FOUND);
@@ -96,13 +87,9 @@ public class MemoirService {
     }
 
     @Transactional
-    public ApiResponse<?> getWeekMemoir(LocalDate startDate, LocalDate endDate){
-        //Checking user
-        Optional<Users> optionalUsers = usersRepository.findById(1L);
-        if(optionalUsers.isEmpty())
-            return ApiResponse.failure(Error.USERS_NOT_FOUND);
-        Users users = optionalUsers.get();
-        log.info("유저 이름 -> {}", users.getNickname());
+    public ApiResponse<?> getWeekMemoir(String authorizationHeader, LocalDate startDate, LocalDate endDate){
+        //Get user
+        Users users = authService.findUserByToken(authorizationHeader);
 
         //일주일 간 회고 조회
         List<Memoir> memoirs = memoirRepository.findAllByWeek(users.getId(), startDate, endDate);

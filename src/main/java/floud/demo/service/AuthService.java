@@ -13,10 +13,12 @@ import floud.demo.dto.auth.TokenResponseDto;
 import floud.demo.dto.auth.UsersResponseDto;
 import floud.demo.repository.UsersRepository;
 import io.jsonwebtoken.io.Decoders;
+import jakarta.annotation.Resource;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -200,8 +202,10 @@ public class AuthService {
                 .nickname(getUser.getNickname())
                 .email(getUser.getEmail())
                 .social_id(getUser.getSocial_id())
+                .nickname(getUser.getNickname())
                 .build();
     }
+
 
     /**
      * 해당 메소드는 토큰에서 유저 정보를 가져오는 것이다.
@@ -278,6 +282,7 @@ public class AuthService {
                 .refresh_token(responseEntity.getBody().get("refresh_token"))
                 .build();
     }
+
 
     public RefreshTokenResponseDto reissueGoogleByRefresh(String refreshToken) {
         HttpHeaders headers = new HttpHeaders();
