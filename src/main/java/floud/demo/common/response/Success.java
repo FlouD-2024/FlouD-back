@@ -15,6 +15,8 @@ public enum Success {
     GET_GOOGLE_ACCESS_TOKEN_SUCCESS(HttpStatus.OK , "구글 로그인 성공"),
     GET_KAKAO_ACCESS_TOKEN_SUCCESS(HttpStatus.OK , "카카오 로그인 성공"),
     GET_REISSUE_ACCESS_TOKEN_SUCCESS(HttpStatus.OK , "토큰 재발급 성공"),
+    GET_REFRESH_TOKEN_SUCCESS(HttpStatus.OK , "리프레시 토큰을 성공적으로 가져왔습니다."),
+
 
     GET_USER_INFO_SUCCESS(HttpStatus.OK , "유저 정보를 불러왔습니다."),
 
@@ -36,8 +38,7 @@ public enum Success {
     CREATE_MEMOIR_SUCCESS(HttpStatus.CREATED, "성공적으로 회고를 등록하였습니다."),
     UPDATE_MYPAGE_SUCCESS(HttpStatus.CREATED , "마이페이지를 성공적으로 수정하였습니다."),
     REQUEST_FRIEND_SUCCESS(HttpStatus.CREATED , "친구 요청을 성공적으로 보내었습니다."),
-    UPDATE_FRIEND_SUCCESS(HttpStatus.CREATED , "친구 상태를 성공적으로 변경하였습니다."),
-    ;
+    UPDATE_FRIEND_SUCCESS(HttpStatus.CREATED , "친구 상태를 성공적으로 변경하였습니다.");
 
 
     private final HttpStatus httpStatus;

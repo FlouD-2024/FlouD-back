@@ -12,6 +12,7 @@ public enum Error {
     ERROR(HttpStatus.BAD_REQUEST, "Request processing failed"),
 
     // 404 NOT FOUND
+    REFRESH_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "리프레시 토큰 정보를 찾을 수 없습니다."),
     USERS_NOT_FOUND(HttpStatus.NOT_FOUND, "유저 정보를 찾을 수 없습니다."),
     FRIEND_NICKNAME_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 닉네임의 회원을 찾을 수 없습니다."),
     FRIENDSHIP_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 친구 관계를 찾을 수 없습니다."),
