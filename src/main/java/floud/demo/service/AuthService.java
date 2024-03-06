@@ -7,18 +7,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import floud.demo.common.response.ApiResponse;
 import floud.demo.common.response.Success;
 import floud.demo.domain.Users;
+import floud.demo.dto.auth.RefreshTokenResponseDto;
 import floud.demo.dto.auth.SocialLoginDecodeResponseDto;
 import floud.demo.dto.auth.TokenResponseDto;
 import floud.demo.dto.auth.UsersResponseDto;
 import floud.demo.repository.UsersRepository;
 import io.jsonwebtoken.io.Decoders;
-import jakarta.annotation.Resource;
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -97,9 +95,6 @@ public class AuthService {
                 String id_token = tokenResponseDto.getId_token();
                 String refreshToken = tokenResponseDto.getRefresh_token();
                 getUserInfo(id_token);
-//                if (getUser == null) { // 유저가 없을 때, 토큰 정보를 받아서 저장해야함
-//                    saveMemberInfo();
-//                }
 
                 return ApiResponse.success(Success.GET_GOOGLE_ACCESS_TOKEN_SUCCESS, TokenResponseDto.builder()
                         .id_token(id_token)
@@ -255,5 +250,59 @@ public class AuthService {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public RefreshTokenResponseDto reissueKakaoByRefresh(String refreshToken) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+
+        params.add("refresh_token", refreshToken);
+        params.add("grant_type", "refresh_token");
+        params.add("client_id", KAKAO_CLIENT_ID);
+        params.add("client_secret", KAKAO_CLIENT_SECRET);
+
+        // 헤더와 파라미터를 합쳐서 요청 엔터티 생성
+        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(params, headers);
+
+        ResponseEntity<Map<String, String>> responseEntity = new RestTemplate().exchange(
+                KAKAO_TOKEN_URL,
+                HttpMethod.POST,
+                requestEntity,
+                new ParameterizedTypeReference<Map<String, String>>() {}
+        );
+
+        return RefreshTokenResponseDto.builder()
+                .id_token(responseEntity.getBody().get("id_token"))
+                .refresh_token(responseEntity.getBody().get("refresh_token"))
+                .build();
+    }
+
+    public RefreshTokenResponseDto reissueGoogleByRefresh(String refreshToken) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+
+        params.add("refresh_token", refreshToken);
+        params.add("grant_type", "refresh_token");
+        params.add("client_id", GOOGLE_CLIENT_ID);
+        params.add("client_secret", GOOGLE_CLIENT_SECRET);
+
+        // 헤더와 파라미터를 합쳐서 요청 엔터티 생성
+        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(params, headers);
+
+        ResponseEntity<Map<String, String>> responseEntity = new RestTemplate().exchange(
+                GOOGLE_TOKEN_URL,
+                HttpMethod.POST,
+                requestEntity,
+                new ParameterizedTypeReference<Map<String, String>>() {}
+        );
+
+        return RefreshTokenResponseDto.builder()
+                .id_token(responseEntity.getBody().get("id_token"))
+                .refresh_token(responseEntity.getBody().get("refresh_token"))
+                .build();
     }
 }

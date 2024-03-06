@@ -14,6 +14,7 @@ public enum Success {
     //200 SUCCESS
     GET_GOOGLE_ACCESS_TOKEN_SUCCESS(HttpStatus.OK , "구글 로그인 성공"),
     GET_KAKAO_ACCESS_TOKEN_SUCCESS(HttpStatus.OK , "카카오 로그인 성공"),
+    GET_REISSUE_ACCESS_TOKEN_SUCCESS(HttpStatus.OK , "토큰 재발급 성공"),
 
     GET_USER_INFO_SUCCESS(HttpStatus.OK , "유저 정보를 불러왔습니다."),
 
