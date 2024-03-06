@@ -171,6 +171,18 @@ public class AuthService {
         return ApiResponse.success(Success.GET_USER_INFO_SUCCESS, usersInfoResponse);
     }
 
+    public Users findUserByToken(String authorizationHeader) {
+
+        System.out.println("authorizationHeader = " + authorizationHeader);
+
+        String token = authorizationHeader.substring("Bearer ".length());
+        UsersResponseDto userinfo = decodeToken(token);
+        Users getUser = findUserBySocial_id(userinfo.getSocial_id());
+        System.out.println("getUser = " + getUser);
+
+        return getUser;
+    }
+
     public UsersResponseDto decodeToken(String token) {
         String decode = decryptBase64UrlToken(token.split("\\.")[1]);
         System.out.println("decode = " + decode);

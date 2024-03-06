@@ -30,19 +30,16 @@ import java.util.Optional;
 @Service
 public class FriendService {
 
+    private final AuthService authService;
     private final UsersRepository usersRepository;
     private final MemoirRepository memoirRepository;
     private final FriendshipRepository friendshipRepository;
 
 
     @Transactional
-    public ApiResponse<?> findFriend(String nickname){
-        //Checking user
-        Optional<Users> optionalUsers = usersRepository.findById(1L);
-        if(optionalUsers.isEmpty())
-            return ApiResponse.failure(Error.USERS_NOT_FOUND);
-        Users users = optionalUsers.get();
-        log.info("유저 이름 -> {}", users.getNickname());
+    public ApiResponse<?> findFriend(String authorizationHeader, String nickname){
+        //Get user
+        Users users = authService.findUserByToken(authorizationHeader);
 
         if(nickname.equals(users.getNickname()))
             return ApiResponse.failure(Error.NOT_BE_FRIEND_MYSELF);
@@ -60,13 +57,9 @@ public class FriendService {
     }
 
     @Transactional
-    public ApiResponse<?> getFriendsInfo(LocalDate date){
-        //Checking user
-        Optional<Users> optionalUsers = usersRepository.findById(1L);
-        if(optionalUsers.isEmpty())
-            return ApiResponse.failure(Error.USERS_NOT_FOUND);
-        Users users = optionalUsers.get();
-        log.info("유저 이름 -> {}", users.getNickname());
+    public ApiResponse<?> getFriendsInfo( String authorizationHeader, LocalDate date){
+        //Get user
+        Users users = authService.findUserByToken(authorizationHeader);
 
         //친구 정보 가져오기
         List<FriendshipDto> friendshipList = findFriendInfo(users, date);
@@ -82,13 +75,9 @@ public class FriendService {
 
 
     @Transactional
-    public ApiResponse<?> addFriend(FriendshipCreateRequestDto requestDto){
-        //Checking user
-        Optional<Users> optionalUsers = usersRepository.findById(1L);
-        if(optionalUsers.isEmpty())
-            return ApiResponse.failure(Error.USERS_NOT_FOUND);
-        Users users = optionalUsers.get();
-        log.info("유저 이름 -> {}", users.getNickname());
+    public ApiResponse<?> addFriend(String authorizationHeader, FriendshipCreateRequestDto requestDto){
+        //Get user
+        Users users = authService.findUserByToken(authorizationHeader);
 
         //Checking friend is existed
         Optional<Users> optionalFriend = usersRepository.findByNickname(requestDto.getNickname());
@@ -109,7 +98,10 @@ public class FriendService {
     }
 
     @Transactional
-    public ApiResponse<?> getMemoirOfFriend(Long memoir_id){
+    public ApiResponse<?> getMemoirOfFriend(String authorizationHeader, Long memoir_id){
+        //Get user
+        Users users = authService.findUserByToken(authorizationHeader);
+
         //Checking memoir
         Optional<Memoir> optionalMemoir = memoirRepository.findById(memoir_id);
         if(optionalMemoir.isEmpty())
