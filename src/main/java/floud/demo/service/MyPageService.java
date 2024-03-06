@@ -3,6 +3,7 @@ package floud.demo.service;
 import floud.demo.common.response.ApiResponse;
 import floud.demo.common.response.Error;
 import floud.demo.common.response.Success;
+import floud.demo.domain.Alarm;
 import floud.demo.domain.Friendship;
 import floud.demo.domain.Goal;
 import floud.demo.domain.Users;
@@ -12,6 +13,7 @@ import floud.demo.dto.mypage.dto.MyFriend;
 import floud.demo.dto.mypage.dto.MyGoal;
 import floud.demo.dto.mypage.dto.MyWaiting;
 import floud.demo.dto.mypage.dto.UpdateGoal;
+import floud.demo.repository.AlarmRepository;
 import floud.demo.repository.FriendshipRepository;
 import floud.demo.repository.GoalRepository;
 import floud.demo.repository.UsersRepository;
@@ -33,6 +35,7 @@ public class MyPageService {
     private final UsersRepository usersRepository;
     private final GoalRepository goalRepository;
     private final FriendshipRepository friendshipRepository;
+    private final AlarmRepository alarmRepository;
 
 
     /**
@@ -108,13 +111,15 @@ public class MyPageService {
         Friendship friendship = optionalFriendship.get();
 
         //Check whether request nickname and friendship's from user nickname is matched
-        if(!friendship.getFrom_user().getNickname().equals(requestDto.getNickname()))
-            return ApiResponse.failure(Error.NOT_MATCHED_NICKNAME);
-        if(!friendship.getTo_user().getNickname().equals(users.getNickname()))
+        if(!friendship.getFrom_user().getNickname().equals(requestDto.getNickname())
+            && !friendship.getTo_user().getNickname().equals(users.getNickname()))
             return ApiResponse.failure(Error.NOT_MATCHED_NICKNAME);
 
         //Update Friendship
         friendship.updateStatus(requestDto.getFriendshipStatus());
+
+        //Create Alarm
+        createAlarm(friendship.getFrom_user(), users);
 
         return ApiResponse.success(Success.UPDATE_FRIEND_SUCCESS, Map.of("nowStatus", friendship.getFriendshipStatus()));
     }
@@ -224,4 +229,10 @@ public class MyPageService {
             return friendship.getTo_user();
         }
     }
+
+    private void createAlarm(Users from_user, Users to_user){
+        String message = "친구 신청이 수락되었습니다.";
+        alarmRepository.save(new Alarm(from_user, to_user.getNickname(), message));
+    }
+
 }
