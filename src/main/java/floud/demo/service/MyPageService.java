@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Service
 public class MyPageService {
+    private final AuthService authService;
     private final UsersRepository usersRepository;
     private final GoalRepository goalRepository;
     private final FriendshipRepository friendshipRepository;
@@ -38,13 +39,9 @@ public class MyPageService {
      * 내 정보
      **/
     @Transactional
-    public ApiResponse<?> getMypage(){
-        //Checking user
-        Optional<Users> optionalUsers = usersRepository.findById(1L);
-        if(optionalUsers.isEmpty())
-            return ApiResponse.failure(Error.USERS_NOT_FOUND);
-        Users users = optionalUsers.get();
-        log.info("유저 이름 -> {}", users.getNickname());
+    public ApiResponse<?> getMyPage(String authorizationHeader){
+        //Get user
+        Users users = authService.findUserByToken(authorizationHeader);
 
         //set GoalList
         List<MyGoal> goalList = setGoalList(users.getId());
@@ -57,19 +54,15 @@ public class MyPageService {
     }
 
     @Transactional
-    public ApiResponse<?> checkDuplicatedName(String nickname){
+    public ApiResponse<?> checkDuplicatedName(String authorizationHeader, String nickname){
         boolean isDuplicated = usersRepository.existsByNickname(nickname);
         return ApiResponse.success(Success.CHECK_NICKNAME_DUPLICATED, Map.of("isDuplicated", isDuplicated));
     }
 
     @Transactional
-    public ApiResponse<?> updateMypage(MypageUpdateRequestDto requestDto){
-        //Checking user
-        Optional<Users> optionalUsers = usersRepository.findById(1L);
-        if(optionalUsers.isEmpty())
-            return ApiResponse.failure(Error.USERS_NOT_FOUND);
-        Users users = optionalUsers.get();
-        log.info("유저 이름 -> {}", users.getNickname());
+    public ApiResponse<?> updateMyPage(String authorizationHeader, MypageUpdateRequestDto requestDto){
+        //Get user
+        Users users = authService.findUserByToken(authorizationHeader);
 
         //Update Introduction
         users.updateIntroduction(requestDto.getIntroduction());
@@ -93,13 +86,9 @@ public class MyPageService {
      * 친구 관리
      **/
     @Transactional
-    public ApiResponse<?> getFriendList(){
-        //Checking user
-        Optional<Users> optionalUsers = usersRepository.findById(1L);
-        if(optionalUsers.isEmpty())
-            return ApiResponse.failure(Error.USERS_NOT_FOUND);
-        Users users = optionalUsers.get();
-        log.info("유저 이름 -> {}", users.getNickname());
+    public ApiResponse<?> getFriendList(String authorizationHeader){
+        //Get user
+        Users users = authService.findUserByToken(authorizationHeader);
 
         //Find Friend List
         MypageFriendListResponseDto responseDto = findFriends(users);
@@ -108,13 +97,9 @@ public class MyPageService {
     }
 
     @Transactional
-    public ApiResponse<?> updateFriend(MypageFriendUpdateRequestDto requestDto){
-        //Checking user
-        Optional<Users> optionalUsers = usersRepository.findById(1L);
-        if(optionalUsers.isEmpty())
-            return ApiResponse.failure(Error.USERS_NOT_FOUND);
-        Users users = optionalUsers.get();
-        log.info("유저 이름 -> {}", users.getNickname());
+    public ApiResponse<?> updateFriend(String authorizationHeader, MypageFriendUpdateRequestDto requestDto){
+        //Get user
+        Users users = authService.findUserByToken(authorizationHeader);
 
         //Find Friendship
         Optional<Friendship> optionalFriendship = friendshipRepository.findById(requestDto.getFriendship_id());
@@ -125,6 +110,8 @@ public class MyPageService {
         //Check whether request nickname and friendship's from user nickname is matched
         if(!friendship.getFrom_user().getNickname().equals(requestDto.getNickname()))
             return ApiResponse.failure(Error.NOT_MATCHED_NICKNAME);
+        if(!friendship.getTo_user().getNickname().equals(users.getNickname()))
+            return ApiResponse.failure(Error.NOT_MATCHED_NICKNAME);
 
         //Update Friendship
         friendship.updateStatus(requestDto.getFriendshipStatus());
@@ -133,19 +120,21 @@ public class MyPageService {
     }
 
     @Transactional
-    public ApiResponse<?> deleteFriend(Long friendship_id){
-        //Checking user
-        Optional<Users> optionalUsers = usersRepository.findById(1L);
-        if(optionalUsers.isEmpty())
-            return ApiResponse.failure(Error.USERS_NOT_FOUND);
-        Users users = optionalUsers.get();
-        log.info("유저 이름 -> {}", users.getNickname());
+    public ApiResponse<?> deleteFriend(String authorizationHeader, Long friendship_id){
+        //Get user
+        Users users = authService.findUserByToken(authorizationHeader);
 
         //Find Friendship
         Optional<Friendship> optionalFriendship = friendshipRepository.findById(friendship_id);
         if(optionalFriendship.isEmpty())
             return ApiResponse.failure(Error.FRIENDSHIP_NOT_FOUND);
         Friendship friendship = optionalFriendship.get();
+
+        //Check is user's friendship
+        Users to_user = friendship.getTo_user();
+        Users from_user = friendship.getFrom_user();
+        if(!to_user.equals(users)||!from_user.equals(users))
+            return ApiResponse.failure(Error.NOT_MATCHED_NICKNAME);
 
         //Update Friendship
         friendship.updateStatus(FriendshipStatus.REJECT);
