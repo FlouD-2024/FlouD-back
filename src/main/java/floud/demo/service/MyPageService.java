@@ -141,7 +141,7 @@ public class MyPageService {
         //Check is user's friendship
         Users to_user = friendship.getTo_user();
         Users from_user = friendship.getFrom_user();
-        if(!to_user.equals(users)||!from_user.equals(users))
+        if(!to_user.equals(users)&&!from_user.equals(users))
             return ApiResponse.failure(Error.NOT_MATCHED_NICKNAME);
 
         //Update Friendship
