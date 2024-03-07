@@ -70,7 +70,8 @@ public class AuthService {
         String url = GOOGLE_BASE_URI + "?client_id=" + GOOGLE_CLIENT_ID +
                 "&response_type=code" +
                 "&redirect_uri=" + GOOGLE_REDIRECT_URI +
-                "&scope=" + googleScope;
+                "&scope=" + googleScope +
+                "&access_type=offline";
         return new RedirectView(url);
     }
 
