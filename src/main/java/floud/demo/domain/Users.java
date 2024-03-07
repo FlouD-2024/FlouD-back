@@ -2,6 +2,7 @@ package floud.demo.domain;
 
 import floud.demo.common.domain.BaseTimeEntity;
 import floud.demo.domain.Memoir;
+import floud.demo.dto.mypage.MypageUpdateRequestDto;
 import jakarta.persistence.*;
 
 import lombok.*;
@@ -51,7 +52,8 @@ public class Users extends BaseTimeEntity {
         this.memoirList = memoirList;
     }
 
-    public void updateIntroduction(String introduction){
-        this.introduction = introduction;
+    public void updateUserInfo(MypageUpdateRequestDto requestDto){
+        this.nickname = requestDto.getNickname();
+        this.introduction = requestDto.getIntroduction();
     }
 }
