@@ -3,9 +3,14 @@ package floud.demo.service;
 import floud.demo.common.response.ApiResponse;
 import floud.demo.common.response.Error;
 import floud.demo.common.response.Success;
+import floud.demo.domain.Alarm;
+import floud.demo.domain.Friendship;
 import floud.demo.domain.Memoir;
 import floud.demo.domain.Users;
+import floud.demo.dto.friendship.FriendshipDto;
 import floud.demo.dto.memoir.*;
+import floud.demo.repository.AlarmRepository;
+import floud.demo.repository.FriendshipRepository;
 import floud.demo.repository.MemoirRepository;
 import floud.demo.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -25,6 +31,8 @@ import java.util.stream.Collectors;
 public class MemoirService {
     private final AuthService authService;
     private final MemoirRepository memoirRepository;
+    private final AlarmRepository alarmRepository;
+    private final FriendshipRepository friendshipRepository;
 
     @Transactional
     public ApiResponse<?> createMemoir(String authorizationHeader, MemoirCreateRequestDto memoirCreateRequestDto){
@@ -39,6 +47,10 @@ public class MemoirService {
         //Create Memoir
         Memoir newMemoir = memoirCreateRequestDto.toEntity(users);
         memoirRepository.save(newMemoir);
+
+        //Create Alarm
+        createAlarm(users);
+
         return ApiResponse.success(Success.CREATE_MEMOIR_SUCCESS, Map.of("memoir_id", newMemoir.getId()));
     }
 
@@ -113,4 +125,28 @@ public class MemoirService {
         return  ApiResponse.success(Success.GET_MULTIPLE_MEMOIR_SUCCESS, responseDto);
 
     }
+
+    private void createAlarm(Users user){
+        List<Users> friendList = findMyFriendList(user);
+        for (Users friend : friendList) {
+            String message = "최근 회고를 작성했습니다.";
+            alarmRepository.save(new Alarm(friend, user.getNickname(), message));
+        }
+    }
+
+    private List<Users> findMyFriendList(Users me){
+        List<Friendship> myfriendship = friendshipRepository.findAllByUsersId(me.getId());
+        List<Users> friendList = new ArrayList<>();
+        for (Friendship myfriend : myfriendship) {
+            Users friend;
+            if (myfriend.getTo_user().equals(me)) {
+                friend = myfriend.getFrom_user();
+            } else {
+                friend = myfriend.getTo_user();
+            }
+            friendList.add(friend);
+        }
+        return friendList;
+    }
+
 }
