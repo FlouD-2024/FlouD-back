@@ -68,7 +68,7 @@ public class MyPageService {
         Users users = authService.findUserByToken(authorizationHeader);
 
         //Update Introduction
-        users.updateIntroduction(requestDto.getIntroduction());
+        users.updateUserInfo(requestDto);
         usersRepository.save(users);
 
         //Update Goals
