@@ -22,6 +22,7 @@ public enum Error {
     NOT_BE_FRIEND_MYSELF(HttpStatus.CONFLICT, "본인과는 친구가 될 수 없습니다."),
     MEMOIR_ALREADY_EXIST(HttpStatus.CONFLICT, "이미 오늘의 회고를 작성하였습니다."),
     FRIENDSHIP_ALREADY_EXIST(HttpStatus.CONFLICT, "이미 친구 관계가 존재합니다."),
+    NICKNAME_ALREADY_EXIST(HttpStatus.CONFLICT, "해당 닉네임을 가진 유저가 이미 존재합니다. 닉네임 중복 체크를 해주세요."),
     NOT_MATCHED_NICKNAME(HttpStatus.CONFLICT, "친구 관계 정보가 일치하지 않습니다."),
 
     // 500 INTERNAL SERVER ERROR
