@@ -66,7 +66,11 @@ public class MyPageService {
         //Get user
         Users users = authService.findUserByToken(authorizationHeader);
 
-        //Update Introduction
+        //Check Nickname Duplicated
+        if(checkNicknameDuplicated(requestDto.getNickname()))
+                return ApiResponse.failure(Error.NICKNAME_ALREADY_EXIST);
+
+        //Update User info
         users.updateUserInfo(requestDto);
         usersRepository.save(users);
 
