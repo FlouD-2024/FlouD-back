@@ -2,7 +2,6 @@ package floud.demo.service;
 
 import floud.demo.common.exception.NotFoundException;
 import floud.demo.common.response.ApiResponse;
-import floud.demo.common.response.Error;
 import floud.demo.common.response.Success;
 import floud.demo.domain.Community;
 import floud.demo.domain.Users;
@@ -63,13 +62,23 @@ public class CommunityService {
         //Create Community Post
         Community newCommunity = communityRepository.save(requestDto.toEntity(users));
 
-        return ApiResponse.success(Success.CREATE_COMMUNITY_POST_SUCCESS, SavePostResponseDto.builder()
+        return ApiResponse.success(Success.CREATE_COMMUNITY_POST_SUCCESS, PostResponseDto.builder()
                 .community_id(newCommunity.getId())
                 .nickname(newCommunity.getUsers().getNickname())
                 .title(newCommunity.getTitle())
                 .content(newCommunity.getContent())
                 .written_at(newCommunity.getCreated_at())
                 .build());
+    }
+
+    @Transactional
+    public ApiResponse<?> updatePost(String authorizationHeader, UpdatePostRequestDto requestDto){
+        //Get user
+        Users users = authService.findUserByToken(authorizationHeader);
+        //Get Community
+        Community community = communityRepository.findById(requestDto.getCommunity_id()).orElseThrow(() -> new NotFoundException("해당 게시글을 찾을 수 없습니다."){});
+
+        return ApiResponse.success(Success.UPDATE_COMMUNITY_POST_SUCCESS);
     }
 
 
