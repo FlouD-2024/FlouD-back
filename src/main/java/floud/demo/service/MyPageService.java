@@ -58,8 +58,7 @@ public class MyPageService {
 
     @Transactional
     public ApiResponse<?> checkDuplicatedName(String authorizationHeader, String nickname){
-        boolean isDuplicated = usersRepository.existsByNickname(nickname);
-        return ApiResponse.success(Success.CHECK_NICKNAME_DUPLICATED, Map.of("isDuplicated", isDuplicated));
+        return ApiResponse.success(Success.CHECK_NICKNAME_DUPLICATED, Map.of("isDuplicated", checkNicknameDuplicated(nickname)));
     }
 
     @Transactional
@@ -67,8 +66,12 @@ public class MyPageService {
         //Get user
         Users users = authService.findUserByToken(authorizationHeader);
 
-        //Update Introduction
-        users.updateIntroduction(requestDto.getIntroduction());
+        //Check Nickname Duplicated
+        if(checkNicknameDuplicated(requestDto.getNickname()))
+                return ApiResponse.failure(Error.NICKNAME_ALREADY_EXIST);
+
+        //Update User info
+        users.updateUserInfo(requestDto);
         usersRepository.save(users);
 
         //Update Goals
@@ -138,7 +141,7 @@ public class MyPageService {
         //Check is user's friendship
         Users to_user = friendship.getTo_user();
         Users from_user = friendship.getFrom_user();
-        if(!to_user.equals(users)||!from_user.equals(users))
+        if(!to_user.equals(users)&&!from_user.equals(users))
             return ApiResponse.failure(Error.NOT_MATCHED_NICKNAME);
 
         //Update Friendship
@@ -153,7 +156,7 @@ public class MyPageService {
 
     }
 
-    public List<MyGoal> setGoalList(Long users_id){
+    private List<MyGoal> setGoalList(Long users_id){
         List<Goal> goals = goalRepository.findAllByUserId(users_id);
         return goals.stream()
                 .map(goal -> MyGoal.builder()
@@ -164,7 +167,7 @@ public class MyPageService {
                 .collect(Collectors.toList());
     }
 
-    public void updateGoal(Users users, List<UpdateGoal> requestDtoGoalList){
+    private void updateGoal(Users users, List<UpdateGoal> requestDtoGoalList){
         List<Goal> goals = goalRepository.findAllByUserId(users.getId());
 
         // Delete all existing goals
@@ -181,6 +184,10 @@ public class MyPageService {
             Goal newGoal = goal.toEntity(users);
             goalRepository.save(newGoal);
         }
+    }
+
+    private boolean checkNicknameDuplicated(String nickname){
+        return usersRepository.existsByNickname(nickname);
     }
 
     public MypageFriendListResponseDto findFriends(Users me){
@@ -234,5 +241,6 @@ public class MyPageService {
         String message = "친구 신청이 수락되었습니다.";
         alarmRepository.save(new Alarm(from_user, to_user.getNickname(), message));
     }
+
 
 }

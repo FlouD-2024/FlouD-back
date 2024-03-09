@@ -15,7 +15,7 @@ public interface FriendshipRepository extends JpaRepository<Friendship, Long> {
     List<Friendship> findAllByUsersId(Long users_id);
 
     //현재 친구 관계가 있는 지 확인
-    @Query(value = "SELECT * FROM Friendship f " +
+    @Query(value = "SELECT * FROM friendship f " +
             "WHERE (f.to_user = :toUserId AND f.from_user = :fromUserId) " +
             "OR (f.to_user = :fromUserId AND f.from_user = :toUserId)",  nativeQuery = true)
     Optional<Friendship> checkExistingFriendship(Long toUserId, Long fromUserId);
@@ -26,5 +26,9 @@ public interface FriendshipRepository extends JpaRepository<Friendship, Long> {
     List<Friendship> findAllByWaitingToUser(Long users_id);
 
     Optional<Friendship> findById(Long id);
+
+    //친구 거절/삭제한 친구 관계들
+    @Query(value = "SELECT * FROM friendship f WHERE f.friendship_status = 'REJECT'", nativeQuery = true)
+    List<Friendship> findAllRejectStatus();
 
 }
