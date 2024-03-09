@@ -14,8 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -84,6 +84,22 @@ public class CommunityService {
         communityRepository.flush();
 
         return ApiResponse.success(Success.UPDATE_COMMUNITY_POST_SUCCESS, setResponseDto(community));
+    }
+
+    @Transactional
+    public ApiResponse<?> deletePost(String authorizationHeader, Long community_id){
+        //Get user
+        Users users = authService.findUserByToken(authorizationHeader);
+
+        //Get Community
+        Community community = communityRepository.findById(community_id).orElseThrow(() -> new NotFoundException("해당 게시글을 찾을 수 없습니다."){});
+
+        if(!checkMyPost(users, community))
+            ApiResponse.failure(Error.NO_PERMISSION_TO_POST);
+
+        communityRepository.delete(community);
+
+        return ApiResponse.success(Success.DELETE_COMMUNITY_POST_SUCCESS, Map.of("community_id", community_id));
     }
 
 

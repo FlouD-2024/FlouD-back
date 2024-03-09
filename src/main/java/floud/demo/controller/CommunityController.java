@@ -37,4 +37,10 @@ public class CommunityController {
                                      @RequestBody UpdatePostRequestDto requestDto){
         return communityService.updatePost(authorizationHeader, requestDto);
     }
+
+    @DeleteMapping("/post/{community_id}")
+    public ApiResponse<?> deletePost(@RequestHeader(value="Authorization") String authorizationHeader,
+                                     @PathVariable(name = "community_id") Long community_id){
+        return communityService.deletePost(authorizationHeader, community_id);
+    }
 }
