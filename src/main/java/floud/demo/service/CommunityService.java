@@ -27,15 +27,7 @@ public class CommunityService {
         //Get user
         Users users = authService.findUserByToken(authorizationHeader);
 
-        List<Community> communityList =  communityRepository.findTop30ByPostType(postType.toString());
-        List<Post> postList = communityList.stream().
-                map(community -> Post.builder()
-                        .community_id(community.getId())
-                        .title(community.getTitle())
-                        .content(community.getContent())
-                        .postType(community.getPostType())
-                        .build())
-                .collect(Collectors.toList());
+        List<Post> postList = setPostList(postType.toString());
 
         return ApiResponse.success(Success.GET_COMMUNITY_SUCCESS, CommunityResponseDto.builder()
                 .nickname(users.getNickname())
@@ -65,6 +57,19 @@ public class CommunityService {
 
     private boolean checkMyPost(Users users, Community community){
         return users.equals(community.getUsers());
+    }
+
+    private List<Post> setPostList(String postType){
+        List<Community> communityList =  communityRepository.findTop30ByPostType(postType);
+
+        return communityList.stream().
+                map(community -> Post.builder()
+                        .community_id(community.getId())
+                        .title(community.getTitle())
+                        .content(community.getContent())
+                        .postType(community.getPostType())
+                        .build())
+                .collect(Collectors.toList());
     }
 
 }
