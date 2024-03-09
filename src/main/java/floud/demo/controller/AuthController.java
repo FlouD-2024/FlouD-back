@@ -1,7 +1,9 @@
 package floud.demo.controller;
 
 import floud.demo.common.response.ApiResponse;
+import floud.demo.common.response.Error;
 import floud.demo.common.response.Success;
+import floud.demo.dto.auth.RedisTokenResponseDto;
 import floud.demo.dto.auth.RefreshTokenResponseDto;
 import floud.demo.dto.auth.SocialLoginDecodeResponseDto;
 import floud.demo.dto.auth.UsersResponseDto;
@@ -55,5 +57,19 @@ public class AuthController {
     public ApiResponse<?> getGoogleByRefreshToken(@RequestParam("refresh_token") String refreshToken) {
         RefreshTokenResponseDto result = authService.reissueGoogleByRefresh(refreshToken);
         return ApiResponse.success(Success.GET_REISSUE_ACCESS_TOKEN_SUCCESS,result);
+    }
+
+    @GetMapping("/get-refresh-token")
+    public ApiResponse<?> getRefreshToken(@RequestHeader(value="Authorization") String authorizationHeader) {
+        String refreshToken = authService.getRefreshToken(authorizationHeader);
+        RedisTokenResponseDto getRefreshToken = RedisTokenResponseDto.builder()
+                .refresh_token(refreshToken)
+                .build();
+
+        if (refreshToken != null) {
+            return ApiResponse.success(Success.GET_REFRESH_TOKEN_SUCCESS, getRefreshToken);
+        } else {
+            return ApiResponse.failure(Error.REFRESH_TOKEN_NOT_FOUND);
+        }
     }
 }
