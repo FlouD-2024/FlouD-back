@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Builder
-public class SavePostResponseDto {
+public class PostResponseDto {
     private Long community_id;
     private String nickname;
     private String title;
