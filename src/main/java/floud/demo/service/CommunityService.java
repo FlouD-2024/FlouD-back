@@ -33,7 +33,7 @@ public class CommunityService {
                         .build())
                 .collect(Collectors.toList());
 
-        return ApiResponse.success(Success.GET_COMMUNITY_FIND_FRIEND_SUCCESS, CommunityResponseDto.builder()
+        return ApiResponse.success(Success.GET_COMMUNITY_SUCCESS, CommunityResponseDto.builder()
                 .nickname(users.getNickname())
                 .postType(postType)
                 .postList(postList)

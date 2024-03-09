@@ -38,8 +38,8 @@ public enum Success {
     GET_FRIEND_MEMOIR_SUCCESS(HttpStatus.OK , "친구의 회고를 성공적으로 조회하였습니다."),
     DELETE_FRIEND_SUCCESS(HttpStatus.OK , "친구를 성공적으로 삭제하였습니다."),
 
-    GET_COMMUNITY_FIND_FRIEND_SUCCESS(HttpStatus.OK , "친구 찾기 게시판을 성공적으로 조회하였습니다."),
-    GET_COMMUNITY_FREE_SUCCESS(HttpStatus.OK , "자유 게시판을 성공적으로 조회하였습니다."),
+    GET_COMMUNITY_SUCCESS(HttpStatus.OK , "게시판을 성공적으로 조회하였습니다."),
+    GET_COMMUNITY_DETAIL_SUCCESS(HttpStatus.OK , "하나의 게시글을 성공적으로 조회하였습니다."),
     GET_COMMUNITY_POST_SUCCESS(HttpStatus.OK , "내가 작성한 게시글을 성공적으로 조회하였습니다."),
     UPDATE_COMMUNITY_POST_SUCCESS(HttpStatus.OK , "나의 게시글을 성공적으로 수정하였습니다."),
     DELETE_COMMUNITY_POST_SUCCESS(HttpStatus.OK , "나의 게시글을 성공적으로 삭제하였습니다."),
