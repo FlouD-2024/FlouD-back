@@ -14,10 +14,7 @@ import floud.demo.dto.mypage.dto.MyFriend;
 import floud.demo.dto.mypage.dto.MyGoal;
 import floud.demo.dto.mypage.dto.MyWaiting;
 import floud.demo.dto.mypage.dto.UpdateGoal;
-import floud.demo.repository.AlarmRepository;
-import floud.demo.repository.FriendshipRepository;
-import floud.demo.repository.GoalRepository;
-import floud.demo.repository.UsersRepository;
+import floud.demo.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -37,6 +34,7 @@ public class MyPageService {
     private final GoalRepository goalRepository;
     private final FriendshipRepository friendshipRepository;
     private final AlarmRepository alarmRepository;
+    private final CommunityRepository communityRepository;
 
 
     /**
@@ -88,6 +86,15 @@ public class MyPageService {
                 .goalList(updatedGoalList)
                 .build());
     }
+
+    /**
+     * 내가 쓴 글
+     **/
+    @Transactional
+    public ApiResponse<?> getMyCommunity(String authorizationHeader){
+        return ApiResponse.success(Success.GET_MYPAGE_COMMUNITY_SUCCESS);
+    }
+
 
     /**
      * 친구 관리

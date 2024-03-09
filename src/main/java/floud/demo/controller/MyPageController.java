@@ -29,6 +29,11 @@ public class MyPageController {
         return myPageService.updateMyPage(authorizationHeader, mypageUpdateRequestDto);
     }
 
+    @GetMapping("/community")
+    public ApiResponse<?> getMyCommunity(@RequestHeader(value="Authorization") String authorizationHeader){
+        return myPageService.getMyCommunity(authorizationHeader);
+    }
+
     @GetMapping("/friend")
     public ApiResponse<?> getFriendList(@RequestHeader(value="Authorization") String authorizationHeader){
         return myPageService.getFriendList(authorizationHeader);
