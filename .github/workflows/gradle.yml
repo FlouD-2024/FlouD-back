@@ -61,7 +61,7 @@ jobs:
         run: sudo docker stop $(sudo docker ps -q) 2>/dev/null || true
 
       - name: docker run new container
-        run: sudo docker run --name floud --rm -d -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/floud
+        run: sudo docker run --name floud --rm -d -p 80:8080 ${{ secrets.DOCKERHUB_USERNAME }}/floud
 
       - name: delete old docker image
         run: sudo docker system prune -f
