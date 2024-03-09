@@ -10,9 +10,11 @@ import floud.demo.domain.enums.PostType;
 import floud.demo.dto.community.CommunityDetailResponseDto;
 import floud.demo.dto.community.CommunityResponseDto;
 import floud.demo.dto.community.Post;
+import floud.demo.dto.community.SavePostRequestDto;
 import floud.demo.repository.CommunityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,6 +25,8 @@ import java.util.stream.Collectors;
 public class CommunityService {
     private final AuthService authService;
     private final CommunityRepository communityRepository;
+
+    @Transactional
     public ApiResponse<?> getCommunity(String authorizationHeader, PostType postType){
         //Get user
         Users users = authService.findUserByToken(authorizationHeader);
@@ -36,6 +40,7 @@ public class CommunityService {
                 .build());
     }
 
+    @Transactional
     public ApiResponse<?> getCommunityDetail(String authorizationHeader, Long community_id){
         //Get user
         Users users = authService.findUserByToken(authorizationHeader);
@@ -53,6 +58,12 @@ public class CommunityService {
                         .written_at(community.getUpdated_at())
                 .build());
     }
+
+    @Transactional
+    public ApiResponse<?> savePost(SavePostRequestDto requestDto){
+        return ApiResponse.success(Success.CREATE_COMMUNITY_POST_SUCCESS);
+    }
+
 
     private boolean checkMyPost(Users users, Community community){
         return users.equals(community.getUsers());

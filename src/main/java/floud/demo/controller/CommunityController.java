@@ -2,6 +2,7 @@ package floud.demo.controller;
 
 import floud.demo.common.response.ApiResponse;
 import floud.demo.domain.enums.PostType;
+import floud.demo.dto.community.SavePostRequestDto;
 import floud.demo.service.CommunityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -22,5 +23,11 @@ public class CommunityController {
     public ApiResponse<?> getCommunityDetail(@RequestHeader(value="Authorization") String authorizationHeader,
                                        @PathVariable(name = "community_id")Long community_id){
         return communityService.getCommunityDetail(authorizationHeader, community_id);
+    }
+
+    @PostMapping
+    public ApiResponse<?> savePost(@RequestHeader(value="Authorization") String authorizationHeader,
+                                   @RequestBody SavePostRequestDto requestDto){
+        return communityService.savePost(requestDto);
     }
 }
