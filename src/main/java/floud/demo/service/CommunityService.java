@@ -41,8 +41,8 @@ public class CommunityService {
         //Get user
         Users users = authService.findUserByToken(authorizationHeader);
 
-        Community community = communityRepository.findById(community_id)
-                .orElseThrow(() -> new NotFoundException("해당 게시글을 찾을 수 없습니다."){});
+        //Get Community
+        Community community = communityRepository.findById(community_id).orElseThrow(() -> new NotFoundException("해당 게시글을 찾을 수 없습니다."){});
 
         return ApiResponse.success(Success.GET_COMMUNITY_DETAIL_SUCCESS, CommunityDetailResponseDto.builder()
                         .my_nickname(users.getNickname())
