@@ -38,4 +38,9 @@ public class Community extends BaseTimeEntity {
         this.postType = postType;
         this.users = users;
     }
+
+    public void update(String title, String content){
+        this.title = title;
+        this.content = content;
+    }
 }
