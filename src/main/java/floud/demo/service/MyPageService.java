@@ -103,59 +103,6 @@ public class MyPageService {
         return ApiResponse.success(Success.GET_FRIEND_LIST_SUCCESS,responseDto);
     }
 
-    @Transactional
-    public ApiResponse<?> updateFriend(String authorizationHeader, MypageFriendUpdateRequestDto requestDto){
-        //Get user
-        Users users = authService.findUserByToken(authorizationHeader);
-
-        //Find Friendship
-        Optional<Friendship> optionalFriendship = friendshipRepository.findById(requestDto.getFriendship_id());
-        if(optionalFriendship.isEmpty())
-            return ApiResponse.failure(Error.FRIENDSHIP_NOT_FOUND);
-        Friendship friendship = optionalFriendship.get();
-
-        //Check whether request nickname and friendship's from user nickname is matched
-        if(!friendship.getFrom_user().getNickname().equals(requestDto.getNickname())
-            && !friendship.getTo_user().getNickname().equals(users.getNickname()))
-            return ApiResponse.failure(Error.NOT_MATCHED_NICKNAME);
-
-        //Update Friendship
-        friendship.updateStatus(requestDto.getFriendshipStatus());
-
-        //Create Alarm
-        createAlarm(friendship.getFrom_user(), users);
-
-        return ApiResponse.success(Success.UPDATE_FRIEND_SUCCESS, Map.of("nowStatus", friendship.getFriendshipStatus()));
-    }
-
-    @Transactional
-    public ApiResponse<?> deleteFriend(String authorizationHeader, Long friendship_id){
-        //Get user
-        Users users = authService.findUserByToken(authorizationHeader);
-
-        //Find Friendship
-        Optional<Friendship> optionalFriendship = friendshipRepository.findById(friendship_id);
-        if(optionalFriendship.isEmpty())
-            return ApiResponse.failure(Error.FRIENDSHIP_NOT_FOUND);
-        Friendship friendship = optionalFriendship.get();
-
-        //Check is user's friendship
-        Users to_user = friendship.getTo_user();
-        Users from_user = friendship.getFrom_user();
-        if(!to_user.equals(users)&&!from_user.equals(users))
-            return ApiResponse.failure(Error.NOT_MATCHED_NICKNAME);
-
-        //Update Friendship
-        friendship.updateStatus(FriendshipStatus.REJECT);
-
-        return ApiResponse.success(Success.DELETE_FRIEND_SUCCESS, MypageFriendDeleteResponseDto.builder()
-                .friendship_id(friendship_id)
-                .to_user(friendship.getTo_user().getNickname())
-                .from_user(friendship.getFrom_user().getNickname())
-                .friendshipStatus(friendship.getFriendshipStatus())
-                .build());
-
-    }
 
     private List<MyGoal> setGoalList(Long users_id){
         List<Goal> goals = goalRepository.findAllByUserId(users_id);

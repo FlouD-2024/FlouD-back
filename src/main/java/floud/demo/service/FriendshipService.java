@@ -8,11 +8,14 @@ import floud.demo.domain.Friendship;
 import floud.demo.domain.Memoir;
 import floud.demo.domain.Users;
 import floud.demo.domain.enums.AlarmType;
+import floud.demo.domain.enums.FriendshipStatus;
 import floud.demo.dto.friendship.FindFriendResponseDto;
 import floud.demo.dto.friendship.FriendshipCreateRequestDto;
 import floud.demo.dto.friendship.FriendshipDto;
 import floud.demo.dto.friendship.FriendshipListResponseDto;
 import floud.demo.dto.memoir.OneMemoirResponseDto;
+import floud.demo.dto.mypage.MypageFriendDeleteResponseDto;
+import floud.demo.dto.mypage.MypageFriendUpdateRequestDto;
 import floud.demo.repository.AlarmRepository;
 import floud.demo.repository.FriendshipRepository;
 import floud.demo.repository.MemoirRepository;
@@ -121,6 +124,59 @@ public class FriendshipService {
                 .problem_memoir(memoir.getProblem_memoir())
                 .try_memoir(memoir.getTry_memoir())
                 .created_at(memoir.getCreated_at())
+                .build());
+
+    }
+    @Transactional
+    public ApiResponse<?> updateFriend(String authorizationHeader, MypageFriendUpdateRequestDto requestDto){
+        //Get user
+        Users users = authService.findUserByToken(authorizationHeader);
+
+        //Find Friendship
+        Optional<Friendship> optionalFriendship = friendshipRepository.findById(requestDto.getFriendship_id());
+        if(optionalFriendship.isEmpty())
+            return ApiResponse.failure(Error.FRIENDSHIP_NOT_FOUND);
+        Friendship friendship = optionalFriendship.get();
+
+        //Check whether request nickname and friendship's from user nickname is matched
+        if(!friendship.getFrom_user().getNickname().equals(requestDto.getNickname())
+                && !friendship.getTo_user().getNickname().equals(users.getNickname()))
+            return ApiResponse.failure(Error.NOT_MATCHED_NICKNAME);
+
+        //Update Friendship
+        friendship.updateStatus(requestDto.getFriendshipStatus());
+
+        //Create Alarm
+        createAlarm(friendship.getFrom_user(), users);
+
+        return ApiResponse.success(Success.UPDATE_FRIEND_SUCCESS, Map.of("nowStatus", friendship.getFriendshipStatus()));
+    }
+
+    @Transactional
+    public ApiResponse<?> deleteFriend(String authorizationHeader, Long friendship_id){
+        //Get user
+        Users users = authService.findUserByToken(authorizationHeader);
+
+        //Find Friendship
+        Optional<Friendship> optionalFriendship = friendshipRepository.findById(friendship_id);
+        if(optionalFriendship.isEmpty())
+            return ApiResponse.failure(Error.FRIENDSHIP_NOT_FOUND);
+        Friendship friendship = optionalFriendship.get();
+
+        //Check is user's friendship
+        Users to_user = friendship.getTo_user();
+        Users from_user = friendship.getFrom_user();
+        if(!to_user.equals(users)&&!from_user.equals(users))
+            return ApiResponse.failure(Error.NOT_MATCHED_NICKNAME);
+
+        //Update Friendship
+        friendship.updateStatus(FriendshipStatus.REJECT);
+
+        return ApiResponse.success(Success.DELETE_FRIEND_SUCCESS, MypageFriendDeleteResponseDto.builder()
+                .friendship_id(friendship_id)
+                .to_user(friendship.getTo_user().getNickname())
+                .from_user(friendship.getFrom_user().getNickname())
+                .friendshipStatus(friendship.getFriendshipStatus())
                 .build());
 
     }

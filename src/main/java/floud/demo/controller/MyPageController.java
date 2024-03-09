@@ -34,15 +34,4 @@ public class MyPageController {
         return myPageService.getFriendList(authorizationHeader);
     }
 
-    @PutMapping("/friend")
-    public ApiResponse<?> updateFriend(@RequestHeader(value="Authorization") String authorizationHeader,
-                                       @RequestBody MypageFriendUpdateRequestDto requestDto){
-        return myPageService.updateFriend(authorizationHeader, requestDto);
-    }
-
-    @PutMapping("/friend/{friendship_id}")
-    public ApiResponse<?> deleteFriend(@RequestHeader(value="Authorization") String authorizationHeader,
-                                       @PathVariable(name = "friendship_id") Long friendship_id){
-        return myPageService.deleteFriend(authorizationHeader, friendship_id);
-    }
 }
