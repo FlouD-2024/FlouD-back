@@ -14,6 +14,5 @@ public class CommunityDetailResponseDto {
     private boolean isMine;
     private String title;
     private String content;
-    private LocalDateTime created_at;
-    private LocalDateTime updated_at;
+    private LocalDateTime written_at;
 }

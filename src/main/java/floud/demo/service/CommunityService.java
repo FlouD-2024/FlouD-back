@@ -50,8 +50,7 @@ public class CommunityService {
                         .isMine(checkMyPost(users, community))
                         .title(community.getTitle())
                         .content(community.getContent())
-                        .created_at(community.getCreated_at())
-                        .updated_at(community.getUpdated_at())
+                        .written_at(community.getUpdated_at())
                 .build());
     }
 
