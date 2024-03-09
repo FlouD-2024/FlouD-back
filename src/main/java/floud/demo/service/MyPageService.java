@@ -7,6 +7,7 @@ import floud.demo.domain.Alarm;
 import floud.demo.domain.Friendship;
 import floud.demo.domain.Goal;
 import floud.demo.domain.Users;
+import floud.demo.domain.enums.AlarmStatus;
 import floud.demo.domain.enums.FriendshipStatus;
 import floud.demo.dto.mypage.*;
 import floud.demo.dto.mypage.dto.MyFriend;
@@ -239,7 +240,7 @@ public class MyPageService {
 
     private void createAlarm(Users from_user, Users to_user){
         String message = "친구 신청이 수락되었습니다.";
-        alarmRepository.save(new Alarm(from_user, to_user.getNickname(), message));
+        alarmRepository.save(new Alarm(from_user, to_user.getNickname(), AlarmStatus.FRIEND, message));
     }
 
 
