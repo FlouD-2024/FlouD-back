@@ -7,17 +7,13 @@ import floud.demo.common.response.Success;
 import floud.demo.domain.Community;
 import floud.demo.domain.Users;
 import floud.demo.domain.enums.PostType;
-import floud.demo.dto.community.CommunityDetailResponseDto;
-import floud.demo.dto.community.CommunityResponseDto;
-import floud.demo.dto.community.Post;
-import floud.demo.dto.community.SavePostRequestDto;
+import floud.demo.dto.community.*;
 import floud.demo.repository.CommunityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -60,8 +56,20 @@ public class CommunityService {
     }
 
     @Transactional
-    public ApiResponse<?> savePost(SavePostRequestDto requestDto){
-        return ApiResponse.success(Success.CREATE_COMMUNITY_POST_SUCCESS);
+    public ApiResponse<?> savePost(String authorizationHeader, SavePostRequestDto requestDto){
+        //Get user
+        Users users = authService.findUserByToken(authorizationHeader);
+
+        //Create Community Post
+        Community newCommunity = communityRepository.save(requestDto.toEntity(users));
+
+        return ApiResponse.success(Success.CREATE_COMMUNITY_POST_SUCCESS, SavePostResponseDto.builder()
+                .community_id(newCommunity.getId())
+                .nickname(newCommunity.getUsers().getNickname())
+                .title(newCommunity.getTitle())
+                .content(newCommunity.getContent())
+                .written_at(newCommunity.getCreated_at())
+                .build());
     }
 
 
