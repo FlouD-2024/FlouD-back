@@ -1,12 +1,12 @@
 package floud.demo.common.exception;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import floud.demo.common.response.Error;
 
-import static org.springframework.http.HttpStatus.FORBIDDEN;
-
-@ResponseStatus(FORBIDDEN)
+@ResponseStatus(HttpStatus.FORBIDDEN)
 public abstract class ForbiddenException extends ApiException {
-    public ForbiddenException(final String message) {
-        super(FORBIDDEN, message, null);
+    public ForbiddenException(final Error message) {
+        super(HttpStatus.FORBIDDEN, message, null);
     }
 }
