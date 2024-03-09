@@ -140,7 +140,7 @@ public class FriendshipService {
 
         //Check whether request nickname and friendship's from user nickname is matched
         if(!friendship.getFrom_user().getNickname().equals(requestDto.getNickname())
-                && !friendship.getTo_user().getNickname().equals(users.getNickname()))
+                || !friendship.getTo_user().getNickname().equals(users.getNickname()))
             return ApiResponse.failure(Error.NOT_MATCHED_NICKNAME);
 
         //Update Friendship
