@@ -1,4 +1,4 @@
-package floud.demo.dto.mypage;
+package floud.demo.dto.friendship;
 
 import floud.demo.domain.enums.FriendshipStatus;
 import lombok.Builder;
@@ -6,9 +6,8 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class MypageFriendDeleteResponseDto {
+public class FriendUpdateRequestDto {
     private Long friendship_id;
-    private String to_user;
-    private String from_user;
+    private String nickname;
     private FriendshipStatus friendshipStatus;
 }
