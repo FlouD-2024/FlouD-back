@@ -6,6 +6,7 @@ import floud.demo.dto.mypage.MypageUpdateRequestDto;
 import jakarta.persistence.*;
 
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,9 +31,11 @@ public class Users extends BaseTimeEntity {
     private String email;
 
     @Column(length = 500)
+    @ColumnDefault("") //디폴트 빈 문자열 설정
     private String introduction;
 
     @Column(length = 500)
+    @ColumnDefault("") //디폴트 빈 문자열 설정
     private String memo;
 
     @OneToMany(mappedBy = "users", fetch = FetchType.LAZY)
