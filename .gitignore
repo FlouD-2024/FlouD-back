@@ -2,6 +2,8 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=java,intellij,git,visualstudiocode,macos,gradle,maven,eclipse
 
 application.yml
+*.rdb
+*.redis
 .idea/
 ### Eclipse ###
 .metadata

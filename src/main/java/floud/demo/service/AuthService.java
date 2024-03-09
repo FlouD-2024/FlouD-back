@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -39,10 +40,16 @@ public class AuthService {
     @Autowired
     private final UsersRepository usersRepository;
 
-    @Autowired
-    private final RedisService redisService;
     private final String GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token";
     private final String KAKAO_TOKEN_URL = "https://kauth.kakao.com/oauth/token";
+
+
+    // redis
+    @Autowired
+    private RedisTemplate<String, String> redisTemplate;
+
+    private final String REDIS_KEY_PREFIX = "refresh_token:";
+
 
     @Value("${oauth2.google.client-id}")
     private String GOOGLE_CLIENT_ID;
@@ -99,9 +106,12 @@ public class AuthService {
                 String id_token = tokenResponseDto.getId_token();
                 String refreshToken = tokenResponseDto.getRefresh_token();
 
-                // redis에 refresh token을 저장함
+
                 UsersResponseDto userInfo = getUserInfo(id_token);
-                redisService.saveRefreshToken(userInfo.getUsers_id(),refreshToken);
+                System.out.println("userInfo = " + userInfo.getUsers_id());
+
+                // 정책에 따라 refresh token이 발급되는 경우에면 저장함
+                saveRefreshToken(userInfo.getUsers_id(),refreshToken);
 
                 return ApiResponse.success(Success.GET_GOOGLE_ACCESS_TOKEN_SUCCESS, TokenResponseDto.builder()
                         .id_token(id_token)
@@ -159,7 +169,7 @@ public class AuthService {
 
                 // redis에 refresh token을 저장함
                 UsersResponseDto userInfo = getUserInfo(id_token);
-                redisService.saveRefreshToken(userInfo.getUsers_id(),refreshToken);
+                saveRefreshToken(userInfo.getUsers_id(),refreshToken);
 
                 return ApiResponse.success(Success.GET_KAKAO_ACCESS_TOKEN_SUCCESS, TokenResponseDto.builder()
                         .id_token(id_token)
@@ -331,5 +341,26 @@ public class AuthService {
                 .id_token(responseEntity.getBody().get("id_token"))
                 .refresh_token(responseEntity.getBody().get("refresh_token"))
                 .build();
+    }
+
+    /**
+     * redis refresh token 저장
+     */
+    public void saveRefreshToken(Long userId, String refreshToken) {
+        System.out.println("userId = " + userId);
+        String key = REDIS_KEY_PREFIX + userId;
+        redisTemplate.opsForValue().set(key, refreshToken);
+    }
+
+    /**
+     * redis refresh token 가져오기
+     */
+    public String getRefreshToken(String authorizationHeader) {
+        String token = authorizationHeader.substring("Bearer ".length());
+        SocialLoginDecodeResponseDto userinfo = decodeToken(token); // 1. 토큰 통해 social ID 가져옴
+        Users getUser = findUserBySocial_id(userinfo.getSocial_id()); // 2. 유저가 없으면 DB에 없다는 것임
+        String key = REDIS_KEY_PREFIX + getUser.getId();
+        System.out.println("key = " + redisTemplate.opsForValue().get(key));
+        return redisTemplate.opsForValue().get(key);
     }
 }
