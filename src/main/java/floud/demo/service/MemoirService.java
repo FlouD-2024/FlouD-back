@@ -7,13 +7,11 @@ import floud.demo.domain.Alarm;
 import floud.demo.domain.Friendship;
 import floud.demo.domain.Memoir;
 import floud.demo.domain.Users;
-import floud.demo.domain.enums.AlarmStatus;
-import floud.demo.dto.friendship.FriendshipDto;
+import floud.demo.domain.enums.AlarmType;
 import floud.demo.dto.memoir.*;
 import floud.demo.repository.AlarmRepository;
 import floud.demo.repository.FriendshipRepository;
 import floud.demo.repository.MemoirRepository;
-import floud.demo.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -131,7 +129,7 @@ public class MemoirService {
         List<Users> friendList = findMyFriendList(user);
         for (Users friend : friendList) {
             String message = "최근 회고를 작성했습니다.";
-            alarmRepository.save(new Alarm(friend, user.getNickname(), AlarmStatus.MEMOIR, message));
+            alarmRepository.save(new Alarm(friend, user.getNickname(), AlarmType.MEMOIR, message));
         }
     }
 

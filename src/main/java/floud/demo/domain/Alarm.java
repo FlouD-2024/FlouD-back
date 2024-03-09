@@ -1,7 +1,7 @@
 package floud.demo.domain;
 
 import floud.demo.common.domain.BaseTimeEntity;
-import floud.demo.domain.enums.AlarmStatus;
+import floud.demo.domain.enums.AlarmType;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,16 +25,16 @@ public class Alarm extends BaseTimeEntity {
 
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
-    private AlarmStatus alarmStatus;
+    private AlarmType alarmType;
 
     @Column(nullable = false)
     private String message;
 
     @Builder
-    public Alarm(Users users, String nickname, AlarmStatus alarmStatus, String message){
+    public Alarm(Users users, String nickname, AlarmType alarmType, String message){
         this.users = users;
         this.nickname = nickname;
-        this.alarmStatus = alarmStatus;
+        this.alarmType = alarmType;
         this.message = message;
     }
 }

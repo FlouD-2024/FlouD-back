@@ -7,7 +7,7 @@ import floud.demo.domain.Alarm;
 import floud.demo.domain.Friendship;
 import floud.demo.domain.Memoir;
 import floud.demo.domain.Users;
-import floud.demo.domain.enums.AlarmStatus;
+import floud.demo.domain.enums.AlarmType;
 import floud.demo.dto.friendship.FindFriendResponseDto;
 import floud.demo.dto.friendship.FriendshipCreateRequestDto;
 import floud.demo.dto.friendship.FriendshipDto;
@@ -127,7 +127,7 @@ public class FriendshipService {
 
     private void createAlarm(Users from_user, Users to_user){
         String message = "친구 신청이 왔습니다.";
-        alarmRepository.save(new Alarm(to_user, from_user.getNickname(), AlarmStatus.FRIEND, message));
+        alarmRepository.save(new Alarm(to_user, from_user.getNickname(), AlarmType.FRIEND, message));
     }
 
     public List<FriendshipDto> findFriendInfo(Users me, LocalDate date){
