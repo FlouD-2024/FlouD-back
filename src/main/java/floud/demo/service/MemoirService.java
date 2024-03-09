@@ -7,6 +7,7 @@ import floud.demo.domain.Alarm;
 import floud.demo.domain.Friendship;
 import floud.demo.domain.Memoir;
 import floud.demo.domain.Users;
+import floud.demo.domain.enums.AlarmStatus;
 import floud.demo.dto.friendship.FriendshipDto;
 import floud.demo.dto.memoir.*;
 import floud.demo.repository.AlarmRepository;
@@ -130,7 +131,7 @@ public class MemoirService {
         List<Users> friendList = findMyFriendList(user);
         for (Users friend : friendList) {
             String message = "최근 회고를 작성했습니다.";
-            alarmRepository.save(new Alarm(friend, user.getNickname(), message));
+            alarmRepository.save(new Alarm(friend, user.getNickname(), AlarmStatus.MEMOIR, message));
         }
     }
 
