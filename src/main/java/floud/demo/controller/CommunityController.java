@@ -25,9 +25,9 @@ public class CommunityController {
         return communityService.getCommunityDetail(authorizationHeader, community_id);
     }
 
-    @PostMapping
+    @PostMapping("/post")
     public ApiResponse<?> savePost(@RequestHeader(value="Authorization") String authorizationHeader,
                                    @RequestBody SavePostRequestDto requestDto){
-        return communityService.savePost(requestDto);
+        return communityService.savePost(authorizationHeader, requestDto);
     }
 }
