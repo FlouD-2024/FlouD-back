@@ -1,5 +1,7 @@
 package floud.demo.controller;
 
+import floud.demo.common.response.ApiResponse;
+import floud.demo.common.response.Success;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,7 +14,7 @@ public class HealthCheckController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public String healthCheck() {
-        return "welcome floud";
+    public ApiResponse<?> healthCheck() {
+        return ApiResponse.success(Success.SUCCESS);
     }
 }
