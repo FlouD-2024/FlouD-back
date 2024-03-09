@@ -1,7 +1,6 @@
 package floud.demo.controller;
 
 import floud.demo.common.response.ApiResponse;
-import floud.demo.dto.mypage.MypageFriendUpdateRequestDto;
 import floud.demo.dto.mypage.MypageUpdateRequestDto;
 import floud.demo.service.MyPageService;
 import lombok.RequiredArgsConstructor;

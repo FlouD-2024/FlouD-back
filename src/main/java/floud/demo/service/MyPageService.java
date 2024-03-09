@@ -3,17 +3,11 @@ package floud.demo.service;
 import floud.demo.common.response.ApiResponse;
 import floud.demo.common.response.Error;
 import floud.demo.common.response.Success;
-import floud.demo.domain.Alarm;
-import floud.demo.domain.Friendship;
-import floud.demo.domain.Goal;
-import floud.demo.domain.Users;
+import floud.demo.domain.*;
 import floud.demo.domain.enums.AlarmType;
-import floud.demo.domain.enums.FriendshipStatus;
+import floud.demo.dto.mypage.MypageUpdateRequestDto;
 import floud.demo.dto.mypage.*;
-import floud.demo.dto.mypage.dto.MyFriend;
-import floud.demo.dto.mypage.dto.MyGoal;
-import floud.demo.dto.mypage.dto.MyWaiting;
-import floud.demo.dto.mypage.dto.UpdateGoal;
+import floud.demo.dto.mypage.dto.*;
 import floud.demo.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -92,7 +85,13 @@ public class MyPageService {
      **/
     @Transactional
     public ApiResponse<?> getMyCommunity(String authorizationHeader){
-        return ApiResponse.success(Success.GET_MYPAGE_COMMUNITY_SUCCESS);
+        //Get user
+        Users users = authService.findUserByToken(authorizationHeader);
+
+        return ApiResponse.success(Success.GET_MYPAGE_COMMUNITY_SUCCESS, CommunityResponseDto.builder()
+                .nickname(users.getNickname())
+                .postList(setMyPosts(users.getId()))
+                .build());
     }
 
 
@@ -109,6 +108,9 @@ public class MyPageService {
 
         return ApiResponse.success(Success.GET_FRIEND_LIST_SUCCESS,responseDto);
     }
+
+
+
 
 
     private List<MyGoal> setGoalList(Long users_id){
@@ -129,7 +131,7 @@ public class MyPageService {
         goalRepository.deleteAll(goals);
 
         // Add new goals
-        for (UpdateGoal requestGoal : requestDtoGoalList) {
+        for (UpdateGoal requestGoal: requestDtoGoalList) {
             log.info("수정된 디데이 -> {}", requestGoal.getContent());
             log.info("수정된 데드라인 -> {}", requestGoal.getDeadline());
             UpdateGoal goal = UpdateGoal.builder()
@@ -145,7 +147,21 @@ public class MyPageService {
         return usersRepository.existsByNickname(nickname);
     }
 
-    public MypageFriendListResponseDto findFriends(Users me){
+
+    private List<MyPost> setMyPosts(Long user_id){
+        //Get My Posts of Community
+        List<Community> communityList = communityRepository.findAllByUser(user_id);
+        return communityList.stream()
+                .map(community -> MyPost.builder()
+                        .community_id(community.getId())
+                        .title(community.getTitle())
+                        .content(community.getContent())
+                        .postType(community.getPostType())
+                        .written_at(community.getUpdated_at())
+                        .build()).toList();
+    }
+
+    private MypageFriendListResponseDto findFriends(Users me){
         List<Friendship> waitingFriends = friendshipRepository.findAllByWaitingToUser(me.getId());
         List<Friendship> acceptedFriends = friendshipRepository.findAllByUsersId(me.getId());
 
