@@ -2,6 +2,7 @@ package floud.demo.service;
 
 import floud.demo.common.exception.NotFoundException;
 import floud.demo.common.response.ApiResponse;
+import floud.demo.common.response.Error;
 import floud.demo.common.response.Success;
 import floud.demo.domain.Community;
 import floud.demo.domain.Users;
@@ -9,12 +10,15 @@ import floud.demo.domain.enums.PostType;
 import floud.demo.dto.community.*;
 import floud.demo.repository.CommunityRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class CommunityService {
@@ -78,7 +82,21 @@ public class CommunityService {
         //Get Community
         Community community = communityRepository.findById(requestDto.getCommunity_id()).orElseThrow(() -> new NotFoundException("해당 게시글을 찾을 수 없습니다."){});
 
-        return ApiResponse.success(Success.UPDATE_COMMUNITY_POST_SUCCESS);
+        if(!checkMyPost(users, community))
+            ApiResponse.failure(Error.NO_PERMISSION_TO_POST);
+
+        community.update(requestDto.getTitle(), requestDto.getContent());
+        communityRepository.flush();
+        log.info("게시글 수정 완료");
+        PostResponseDto responseDto = PostResponseDto.builder()
+                .community_id(community.getId())
+                .nickname(users.getNickname())
+                .title(community.getTitle())
+                .content(community.getContent())
+                .written_at(community.getUpdated_at())
+                .build();
+        log.info("게시글 수정 시간 반영 ->{}", community.getUpdated_at());
+        return ApiResponse.success(Success.UPDATE_COMMUNITY_POST_SUCCESS, responseDto);
     }
 
 
