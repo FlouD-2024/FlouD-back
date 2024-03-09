@@ -17,4 +17,10 @@ public class CommunityController {
                                        @RequestParam(name = "post_type")PostType postType){
         return communityService.getCommunity(authorizationHeader, postType);
     }
+
+    @GetMapping("/detail/{community_id}")
+    public ApiResponse<?> getCommunityDetail(@RequestHeader(value="Authorization") String authorizationHeader,
+                                       @PathVariable(name = "community_id")Long community_id){
+        return communityService.getCommunityDetail(authorizationHeader, community_id);
+    }
 }
