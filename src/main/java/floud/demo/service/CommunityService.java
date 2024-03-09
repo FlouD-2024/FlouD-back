@@ -73,7 +73,7 @@ public class CommunityService {
     }
 
 
-    private boolean checkMyPost(Users users, Community community){
+    private Boolean checkMyPost(Users users, Community community){
         return users.equals(community.getUsers());
     }
 
