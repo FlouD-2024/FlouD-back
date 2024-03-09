@@ -2,7 +2,7 @@ package floud.demo.controller;
 
 import floud.demo.common.response.ApiResponse;
 import floud.demo.dto.friendship.FriendshipCreateRequestDto;
-import floud.demo.dto.mypage.MypageFriendUpdateRequestDto;
+import floud.demo.dto.friendship.FriendUpdateRequestDto;
 import floud.demo.service.FriendshipService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -36,7 +36,7 @@ public class FriendshipController {
     }
     @PutMapping
     public ApiResponse<?> updateFriend(@RequestHeader(value="Authorization") String authorizationHeader,
-                                       @RequestBody MypageFriendUpdateRequestDto requestDto){
+                                       @RequestBody FriendUpdateRequestDto requestDto){
         return friendService.updateFriend(authorizationHeader, requestDto);
     }
 

@@ -14,8 +14,8 @@ import floud.demo.dto.friendship.FriendshipCreateRequestDto;
 import floud.demo.dto.friendship.FriendshipDto;
 import floud.demo.dto.friendship.FriendshipListResponseDto;
 import floud.demo.dto.memoir.OneMemoirResponseDto;
-import floud.demo.dto.mypage.MypageFriendDeleteResponseDto;
-import floud.demo.dto.mypage.MypageFriendUpdateRequestDto;
+import floud.demo.dto.friendship.FriendDeleteResponseDto;
+import floud.demo.dto.friendship.FriendUpdateRequestDto;
 import floud.demo.repository.AlarmRepository;
 import floud.demo.repository.FriendshipRepository;
 import floud.demo.repository.MemoirRepository;
@@ -128,7 +128,7 @@ public class FriendshipService {
 
     }
     @Transactional
-    public ApiResponse<?> updateFriend(String authorizationHeader, MypageFriendUpdateRequestDto requestDto){
+    public ApiResponse<?> updateFriend(String authorizationHeader, FriendUpdateRequestDto requestDto){
         //Get user
         Users users = authService.findUserByToken(authorizationHeader);
 
@@ -172,7 +172,7 @@ public class FriendshipService {
         //Update Friendship
         friendship.updateStatus(FriendshipStatus.REJECT);
 
-        return ApiResponse.success(Success.DELETE_FRIEND_SUCCESS, MypageFriendDeleteResponseDto.builder()
+        return ApiResponse.success(Success.DELETE_FRIEND_SUCCESS, FriendDeleteResponseDto.builder()
                 .friendship_id(friendship_id)
                 .to_user(friendship.getTo_user().getNickname())
                 .from_user(friendship.getFrom_user().getNickname())
