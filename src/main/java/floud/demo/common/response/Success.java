@@ -8,8 +8,12 @@ import org.springframework.http.HttpStatus;
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public enum Success {
+
     // Default
     SUCCESS(HttpStatus.OK, "Request successfully processed"),
+
+
+
 
     //200 SUCCESS
     GET_GOOGLE_ACCESS_TOKEN_SUCCESS(HttpStatus.OK , "구글 로그인 성공"),
@@ -34,11 +38,24 @@ public enum Success {
     GET_FRIEND_MEMOIR_SUCCESS(HttpStatus.OK , "친구의 회고를 성공적으로 조회하였습니다."),
     DELETE_FRIEND_SUCCESS(HttpStatus.OK , "친구를 성공적으로 삭제하였습니다."),
 
+    GET_COMMUNITY_SUCCESS(HttpStatus.OK , "게시판을 성공적으로 조회하였습니다."),
+    GET_COMMUNITY_DETAIL_SUCCESS(HttpStatus.OK , "하나의 게시글을 성공적으로 조회하였습니다."),
+    GET_COMMUNITY_POST_SUCCESS(HttpStatus.OK , "내가 작성한 게시글을 성공적으로 조회하였습니다."),
+    UPDATE_COMMUNITY_POST_SUCCESS(HttpStatus.OK , "나의 게시글을 성공적으로 수정하였습니다."),
+    DELETE_COMMUNITY_POST_SUCCESS(HttpStatus.OK , "나의 게시글을 성공적으로 삭제하였습니다."),
+
+
+
+
     //201 CREATED SUCCESS
     CREATE_MEMOIR_SUCCESS(HttpStatus.CREATED, "성공적으로 회고를 등록하였습니다."),
     UPDATE_MYPAGE_SUCCESS(HttpStatus.CREATED , "마이페이지를 성공적으로 수정하였습니다."),
     REQUEST_FRIEND_SUCCESS(HttpStatus.CREATED , "친구 요청을 성공적으로 보내었습니다."),
-    UPDATE_FRIEND_SUCCESS(HttpStatus.CREATED , "친구 상태를 성공적으로 변경하였습니다.");
+    UPDATE_FRIEND_SUCCESS(HttpStatus.CREATED , "친구 상태를 성공적으로 변경하였습니다."),
+    CREATE_COMMUNITY_POST_SUCCESS(HttpStatus.CREATED, "게시글을 성공적으로 등록하였습니다."),
+
+
+    ;
 
 
     private final HttpStatus httpStatus;
