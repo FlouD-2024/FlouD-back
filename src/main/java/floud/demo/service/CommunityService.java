@@ -66,19 +66,14 @@ public class CommunityService {
         //Create Community Post
         Community newCommunity = communityRepository.save(requestDto.toEntity(users));
 
-        return ApiResponse.success(Success.CREATE_COMMUNITY_POST_SUCCESS, PostResponseDto.builder()
-                .community_id(newCommunity.getId())
-                .nickname(newCommunity.getUsers().getNickname())
-                .title(newCommunity.getTitle())
-                .content(newCommunity.getContent())
-                .written_at(newCommunity.getCreated_at())
-                .build());
+        return ApiResponse.success(Success.CREATE_COMMUNITY_POST_SUCCESS, setResponseDto(newCommunity));
     }
 
     @Transactional
     public ApiResponse<?> updatePost(String authorizationHeader, UpdatePostRequestDto requestDto){
         //Get user
         Users users = authService.findUserByToken(authorizationHeader);
+
         //Get Community
         Community community = communityRepository.findById(requestDto.getCommunity_id()).orElseThrow(() -> new NotFoundException("해당 게시글을 찾을 수 없습니다."){});
 
@@ -87,16 +82,8 @@ public class CommunityService {
 
         community.update(requestDto.getTitle(), requestDto.getContent());
         communityRepository.flush();
-        log.info("게시글 수정 완료");
-        PostResponseDto responseDto = PostResponseDto.builder()
-                .community_id(community.getId())
-                .nickname(users.getNickname())
-                .title(community.getTitle())
-                .content(community.getContent())
-                .written_at(community.getUpdated_at())
-                .build();
-        log.info("게시글 수정 시간 반영 ->{}", community.getUpdated_at());
-        return ApiResponse.success(Success.UPDATE_COMMUNITY_POST_SUCCESS, responseDto);
+
+        return ApiResponse.success(Success.UPDATE_COMMUNITY_POST_SUCCESS, setResponseDto(community));
     }
 
 
@@ -115,6 +102,16 @@ public class CommunityService {
                         .postType(community.getPostType())
                         .build())
                 .collect(Collectors.toList());
+    }
+
+    private PostResponseDto setResponseDto(Community community){
+        return PostResponseDto.builder()
+                .community_id(community.getId())
+                .nickname(community.getUsers().getNickname())
+                .title(community.getTitle())
+                .content(community.getContent())
+                .written_at(community.getCreated_at())
+                .build();
     }
 
 }
