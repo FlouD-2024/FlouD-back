@@ -4,6 +4,8 @@ import floud.demo.common.response.ApiResponse;
 import floud.demo.dto.mypage.MypageUpdateRequestDto;
 import floud.demo.service.MyPageService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
@@ -29,8 +31,9 @@ public class MyPageController {
     }
 
     @GetMapping("/community")
-    public ApiResponse<?> getMyCommunity(@RequestHeader(value="Authorization") String authorizationHeader){
-        return myPageService.getMyCommunity(authorizationHeader);
+    public ApiResponse<?> getMyCommunity(@RequestHeader(value="Authorization") String authorizationHeader,
+                                         @PageableDefault(size = 8) Pageable pageable){
+        return myPageService.getMyCommunity(authorizationHeader, pageable);
     }
 
     @GetMapping("/friend")

@@ -5,12 +5,15 @@ import floud.demo.common.response.Error;
 import floud.demo.common.response.Success;
 import floud.demo.domain.*;
 import floud.demo.domain.enums.AlarmType;
+import floud.demo.dto.PageInfo;
 import floud.demo.dto.mypage.MypageUpdateRequestDto;
 import floud.demo.dto.mypage.*;
 import floud.demo.dto.mypage.dto.*;
 import floud.demo.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -84,13 +87,19 @@ public class MyPageService {
      * 내가 쓴 글
      **/
     @Transactional
-    public ApiResponse<?> getMyCommunity(String authorizationHeader){
+    public ApiResponse<?> getMyCommunity(String authorizationHeader, Pageable pageable){
         //Get user
         Users users = authService.findUserByToken(authorizationHeader);
 
+        //Get my post List
+        Page<Community> communityList = communityRepository.findAllByUser(pageable, users.getId());
+        List<MyPost> postList = setMyPosts(communityList);
+        PageInfo pageInfo = setPageInfo(communityList);
+
         return ApiResponse.success(Success.GET_MYPAGE_COMMUNITY_SUCCESS, CommunityResponseDto.builder()
                 .nickname(users.getNickname())
-                .postList(setMyPosts(users.getId()))
+                .postList(postList)
+                .pageInfo(pageInfo)
                 .build());
     }
 
@@ -148,9 +157,7 @@ public class MyPageService {
     }
 
 
-    private List<MyPost> setMyPosts(Long user_id){
-        //Get My Posts of Community
-        List<Community> communityList = communityRepository.findAllByUser(user_id);
+    private List<MyPost> setMyPosts(Page<Community> communityList){
         return communityList.stream()
                 .map(community -> MyPost.builder()
                         .community_id(community.getId())
@@ -208,10 +215,13 @@ public class MyPageService {
         }
     }
 
-    private void createAlarm(Users from_user, Users to_user){
-        String message = "친구 신청이 수락되었습니다.";
-        alarmRepository.save(new Alarm(from_user, to_user.getNickname(), AlarmType.FRIEND, message));
+    private PageInfo setPageInfo(Page<Community> postPage){
+        return PageInfo.builder()
+                .last(!postPage.hasNext())
+                .nowPage(postPage.getNumber())
+                .totalPages(postPage.getTotalPages())
+                .totalElements(postPage.getTotalElements())
+                .build();
     }
-
 
 }
