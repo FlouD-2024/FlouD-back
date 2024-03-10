@@ -3,12 +3,10 @@ package floud.demo.service;
 import floud.demo.common.response.ApiResponse;
 import floud.demo.common.response.Error;
 import floud.demo.common.response.Success;
-import floud.demo.domain.Alarm;
-import floud.demo.domain.Friendship;
-import floud.demo.domain.Memoir;
-import floud.demo.domain.Users;
+import floud.demo.domain.*;
 import floud.demo.domain.enums.AlarmType;
 import floud.demo.domain.enums.FriendshipStatus;
+import floud.demo.dto.PageInfo;
 import floud.demo.dto.friendship.FindFriendResponseDto;
 import floud.demo.dto.friendship.FriendshipCreateRequestDto;
 import floud.demo.dto.friendship.FriendshipDto;
@@ -22,6 +20,8 @@ import floud.demo.repository.MemoirRepository;
 import floud.demo.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -64,16 +64,20 @@ public class FriendshipService {
     }
 
     @Transactional
-    public ApiResponse<?> getFriendsInfo( String authorizationHeader, LocalDate date){
+    public ApiResponse<?> getFriendsInfo( String authorizationHeader, LocalDate date, Pageable pageable){
         //Get user
         Users users = authService.findUserByToken(authorizationHeader);
 
         //친구 정보 가져오기
-        List<FriendshipDto> friendshipList = findFriendInfo(users, date);
+        Page<Friendship> myfriends = friendshipRepository.findAllByUsersIdAndPage(pageable, users.getId());
+
+        List<FriendshipDto> friendshipList = findFriendInfo(users, date, myfriends);
+        PageInfo pageInfo = setPageInfo(myfriends);
 
         return ApiResponse.success(Success.GET_FRIEND_LIST_SUCCESS, FriendshipListResponseDto.builder()
                         .my_nickname(users.getNickname())
                         .friendshipList(friendshipList)
+                        .pageInfo(pageInfo)
                         .build());
     }
 
@@ -186,8 +190,7 @@ public class FriendshipService {
         alarmRepository.save(new Alarm(to_user, from_user.getNickname(), AlarmType.FRIEND, message));
     }
 
-    public List<FriendshipDto> findFriendInfo(Users me, LocalDate date){
-        List<Friendship> myfriends = friendshipRepository.findAllByUsersId(me.getId());
+    public List<FriendshipDto> findFriendInfo(Users me, LocalDate date, Page<Friendship> myfriends){
         List<FriendshipDto> myfriendsInfo = new ArrayList<>();
         for (Friendship myfriend : myfriends) {
             Users friend;
@@ -213,4 +216,12 @@ public class FriendshipService {
         return myfriendsInfo;
     }
 
+    private PageInfo setPageInfo(Page<Friendship> postPage){
+        return PageInfo.builder()
+                .last(!postPage.hasNext())
+                .nowPage(postPage.getNumber())
+                .totalPages(postPage.getTotalPages())
+                .totalElements(postPage.getTotalElements())
+                .build();
+    }
 }
