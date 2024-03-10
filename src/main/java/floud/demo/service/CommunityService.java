@@ -19,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -34,23 +33,11 @@ public class CommunityService {
         Users users = authService.findUserByToken(authorizationHeader);
 
         //Get Posts of Community
-        Page<Post> postPage = setPostList(pageable, postType.toString());
-        List<Post>postList = postPage.stream()
-                .map(post -> Post.builder()
-                        .community_id(post.getCommunity_id())
-                        .title(post.getTitle())
-                        .content(post.getContent())
-                        .postType(post.getPostType())
-                        .build())
-                .toList();
+        Page<Community> postPage = communityRepository.findAllByPostType(pageable, postType.toString());
 
-        //Pageable
-        PageInfo pageInfo = PageInfo.builder()
-                .last(!postPage.hasNext())
-                .nowPage(postPage.getNumber())
-                .totalPages(postPage.getTotalPages())
-                .totalElements(postPage.getTotalElements())
-                .build();
+        //Set Response Dtos
+        List<Post>postList = setPostList(postPage);
+        PageInfo pageInfo = setPageInfo(postPage);
 
         return ApiResponse.success(Success.GET_COMMUNITY_SUCCESS, CommunityResponseDto.builder()
                 .pageInfo(pageInfo)
@@ -128,15 +115,26 @@ public class CommunityService {
         return users.equals(community.getUsers());
     }
 
-    private Page<Post> setPostList(Pageable pageable, String postType){
-        Page<Community> communityPage = communityRepository.findAllByPostType(pageable, postType);
-        return communityPage.map(community -> Post.builder()
-                .community_id(community.getId())
-                .title(community.getTitle())
-                .content(community.getContent())
-                .postType(community.getPostType())
-                .build());
+    private List<Post> setPostList(Page<Community> communityPage){
+        return communityPage.stream()
+                .map(post -> Post.builder()
+                        .community_id(post.getId())
+                        .title(post.getTitle())
+                        .content(post.getContent())
+                        .postType(post.getPostType())
+                        .build())
+                .toList();
     }
+
+    private PageInfo setPageInfo(Page<Community> postPage){
+        return PageInfo.builder()
+                .last(!postPage.hasNext())
+                .nowPage(postPage.getNumber())
+                .totalPages(postPage.getTotalPages())
+                .totalElements(postPage.getTotalElements())
+                .build();
+    }
+
 
     private PostResponseDto setResponseDto(Community community){
         return PostResponseDto.builder()
