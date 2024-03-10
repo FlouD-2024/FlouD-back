@@ -7,6 +7,7 @@ import floud.demo.common.response.Success;
 import floud.demo.domain.Community;
 import floud.demo.domain.Users;
 import floud.demo.domain.enums.PostType;
+import floud.demo.dto.PageInfo;
 import floud.demo.dto.community.*;
 import floud.demo.repository.CommunityRepository;
 import lombok.RequiredArgsConstructor;
@@ -33,9 +34,26 @@ public class CommunityService {
         Users users = authService.findUserByToken(authorizationHeader);
 
         //Get Posts of Community
-        Page<Post> postList = setPostList(pageable, postType.toString());
+        Page<Post> postPage = setPostList(pageable, postType.toString());
+        List<Post>postList = postPage.stream()
+                .map(post -> Post.builder()
+                        .community_id(post.getCommunity_id())
+                        .title(post.getTitle())
+                        .content(post.getContent())
+                        .postType(post.getPostType())
+                        .build())
+                .toList();
+
+        //Pageable
+        PageInfo pageInfo = PageInfo.builder()
+                .last(!postPage.hasNext())
+                .nowPage(postPage.getNumber())
+                .totalPages(postPage.getTotalPages())
+                .totalElements(postPage.getTotalElements())
+                .build();
 
         return ApiResponse.success(Success.GET_COMMUNITY_SUCCESS, CommunityResponseDto.builder()
+                .pageInfo(pageInfo)
                 .nickname(users.getNickname())
                 .postType(postType)
                 .postList(postList)
