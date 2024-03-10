@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   springboot:
-    image: ""${{ secrets.DOCKERHUB_USERNAME }}"/floud:latest
+    image: jobcho6320/floud:latest
     ports:
       - "80:80"
     depends_on:
@@ -16,4 +16,3 @@ services:
     ports:
       - "6379:6379"
     command: redis-server
-
