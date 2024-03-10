@@ -75,4 +75,4 @@ jobs:
         run: sudo systemctl start docker
 
       - name: Start Docker Compose
-        run: docker-compose up -d
+        run: sudo docker-compose up -d
