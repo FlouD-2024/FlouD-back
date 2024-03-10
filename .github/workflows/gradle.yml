@@ -63,5 +63,11 @@ jobs:
             docker-compose down
           fi
 
+      - name: Docker 데몬 상태 확인
+        run: sudo systemctl status docker
+
+      - name: Docker 데몬 시작 (필요한 경우)
+        run: sudo systemctl start docker
+
       - name: Start Docker Compose
         run: docker-compose up -d
