@@ -6,6 +6,8 @@ import floud.demo.dto.community.SavePostRequestDto;
 import floud.demo.dto.community.UpdatePostRequestDto;
 import floud.demo.service.CommunityService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
@@ -16,8 +18,8 @@ public class CommunityController {
 
     @GetMapping
     public ApiResponse<?> getCommunity(@RequestHeader(value="Authorization") String authorizationHeader,
-                                       @RequestParam(name = "post_type")PostType postType){
-        return communityService.getCommunity(authorizationHeader, postType);
+                                       @RequestParam(name = "post_type")PostType postType, @PageableDefault(size = 8) Pageable pageable){
+        return communityService.getCommunity(authorizationHeader, postType, pageable);
     }
 
     @GetMapping("/detail/{community_id}")

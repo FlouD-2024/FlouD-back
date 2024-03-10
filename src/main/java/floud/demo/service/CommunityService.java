@@ -11,6 +11,8 @@ import floud.demo.dto.community.*;
 import floud.demo.repository.CommunityRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,11 +28,12 @@ public class CommunityService {
     private final CommunityRepository communityRepository;
 
     @Transactional
-    public ApiResponse<?> getCommunity(String authorizationHeader, PostType postType){
+    public ApiResponse<?> getCommunity(String authorizationHeader, PostType postType, Pageable pageable){
         //Get user
         Users users = authService.findUserByToken(authorizationHeader);
 
-        List<Post> postList = setPostList(postType.toString());
+        //Get Posts of Community
+        Page<Post> postList = setPostList(pageable, postType.toString());
 
         return ApiResponse.success(Success.GET_COMMUNITY_SUCCESS, CommunityResponseDto.builder()
                 .nickname(users.getNickname())
@@ -107,17 +110,14 @@ public class CommunityService {
         return users.equals(community.getUsers());
     }
 
-    private List<Post> setPostList(String postType){
-        List<Community> communityList =  communityRepository.findTop30ByPostType(postType);
-
-        return communityList.stream().
-                map(community -> Post.builder()
-                        .community_id(community.getId())
-                        .title(community.getTitle())
-                        .content(community.getContent())
-                        .postType(community.getPostType())
-                        .build())
-                .collect(Collectors.toList());
+    private Page<Post> setPostList(Pageable pageable, String postType){
+        Page<Community> communityPage = communityRepository.findAllByPostType(pageable, postType);
+        return communityPage.map(community -> Post.builder()
+                .community_id(community.getId())
+                .title(community.getTitle())
+                .content(community.getContent())
+                .postType(community.getPostType())
+                .build());
     }
 
     private PostResponseDto setResponseDto(Community community){
