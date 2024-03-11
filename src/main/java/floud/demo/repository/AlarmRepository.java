@@ -13,6 +13,6 @@ public interface AlarmRepository extends JpaRepository<Alarm, Long> {
     List<Alarm> find2ByUser(Long users_id);
 
     @Query(value = "SELECT * FROM Alarm a WHERE a.users_id = :users_id " +
-            "ORDER BY c.created_at DESC limit 30", nativeQuery = true)
+            "ORDER BY a.created_at DESC limit 30", nativeQuery = true)
     List<Alarm> find30ByUser(Long users_id);
 }
