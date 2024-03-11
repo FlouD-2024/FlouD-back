@@ -3,10 +3,9 @@ package floud.demo.controller;
 import floud.demo.common.response.ApiResponse;
 import floud.demo.service.HomeService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
 
 @RequiredArgsConstructor
 @RestController
@@ -14,7 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class HomeController {
     private final HomeService homeService;
     @GetMapping
-    public ApiResponse<?> getHome(@RequestHeader(value="Authorization") String authorizationHeader){
-        return homeService.getHome(authorizationHeader);
+    public ApiResponse<?> getHome(@RequestHeader(value="Authorization") String authorizationHeader,
+                                  @RequestParam(name = "date") LocalDate dateTime){
+        return homeService.getHome(authorizationHeader, dateTime);
     }
 }
