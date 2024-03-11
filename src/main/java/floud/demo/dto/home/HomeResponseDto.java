@@ -10,6 +10,7 @@ import java.util.List;
 
 @Builder
 public class HomeResponseDto {
+    private String nickname;
     private Boolean isYesterdayMemoir;
     private Boolean isTodayMemoir;
     private List<MyGoal> goalList;
