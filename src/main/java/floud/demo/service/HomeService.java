@@ -6,6 +6,7 @@ import floud.demo.domain.Alarm;
 import floud.demo.domain.Goal;
 import floud.demo.domain.Memoir;
 import floud.demo.domain.Users;
+import floud.demo.dto.home.AlarmResponseDto;
 import floud.demo.dto.home.HomeResponseDto;
 import floud.demo.dto.home.dto.MyAlarm;
 import floud.demo.dto.home.dto.MyGoal;
@@ -14,6 +15,7 @@ import floud.demo.repository.GoalRepository;
 import floud.demo.repository.MemoirRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -27,6 +29,7 @@ public class HomeService {
     private final GoalRepository goalRepository;
     private final AlarmRepository alarmRepository;
 
+    @Transactional
     public ApiResponse<?> getHome(String authorizationHeader, LocalDate date) {
         //Get user
         Users users = authService.findUserByToken(authorizationHeader);
@@ -60,8 +63,21 @@ public class HomeService {
                 .dateList(dateList)
                 .alarmList(myAlarmList)
                 .build();
+
         return ApiResponse.success(Success.GET_HOME_SUCCESS, responseDto);
     }
+
+
+    @Transactional
+    public ApiResponse<?> getAlarm(String authorizationHeader) {
+        //Get user
+        Users users = authService.findUserByToken(authorizationHeader);
+        //Get Alarm List
+        List<Alarm> alarmList = alarmRepository.find30ByUser(users.getId());
+        List<MyAlarm> myAlarmList = setAlarmList(alarmList);
+        return ApiResponse.success(Success.GET_ALARM_SUCCESS, AlarmResponseDto.builder().alarmList(myAlarmList).build());
+    }
+
 
     private List<MyGoal> setMyGoalList(Long users_id){
         List<Goal> goalList = goalRepository.findAllByUserId(users_id);
