@@ -31,11 +31,11 @@ public class Users extends BaseTimeEntity {
     private String email;
 
     @Column(length = 500)
-    @ColumnDefault("") //디폴트 빈 문자열 설정
+    @ColumnDefault("''") //디폴트 빈 문자열 설정
     private String introduction;
 
     @Column(length = 500)
-    @ColumnDefault("") //디폴트 빈 문자열 설정
+    @ColumnDefault("''") //디폴트 빈 문자열 설정
     private String memo;
 
     @OneToMany(mappedBy = "users", fetch = FetchType.LAZY)
