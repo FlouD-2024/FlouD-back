@@ -17,4 +17,9 @@ public class HomeController {
                                   @RequestParam(name = "date") LocalDate dateTime){
         return homeService.getHome(authorizationHeader, dateTime);
     }
+
+    @GetMapping("/alarm")
+    public ApiResponse<?> getAlarm(@RequestHeader(value="Authorization") String authorizationHeader){
+        return homeService.getAlarm(authorizationHeader);
+    }
 }
