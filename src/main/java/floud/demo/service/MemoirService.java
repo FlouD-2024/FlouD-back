@@ -103,7 +103,7 @@ public class MemoirService {
         Users users = authService.findUserByToken(authorizationHeader);
 
         //일주일 간 회고 조회
-        List<Memoir> memoirs = memoirRepository.findAllByWeek(users.getId(), startDate, endDate);
+        List<Memoir> memoirs = memoirRepository.findAllByDate(users.getId(), startDate, endDate);
         log.info("start-date -> {}", startDate);
         log.info("end-date -> {}", endDate);
 
