@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import floud.demo.common.response.ApiResponse;
+import floud.demo.common.response.Error;
 import floud.demo.common.response.Success;
 import floud.demo.domain.Users;
 import floud.demo.dto.auth.RefreshTokenResponseDto;
@@ -118,7 +119,7 @@ public class AuthService {
                         .refresh_token(refreshToken)
                         .build());
             } else {
-                return null;
+                return ApiResponse.failure(Error.ACCESS_TOKEN_NOT_FOUND);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -134,7 +135,6 @@ public class AuthService {
                 "&response_type=code" +
                 "&redirect_uri=" + KAKAO_REDIRECT_URI +
                 "&scope=" + kakaoScope;
-        System.out.println("url = " + url);
         return new RedirectView(url);
     }
 
@@ -176,7 +176,7 @@ public class AuthService {
                         .refresh_token(refreshToken)
                         .build());
             } else {
-                return null;
+                return ApiResponse.failure(Error.ACCESS_TOKEN_NOT_FOUND);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -198,12 +198,9 @@ public class AuthService {
 
     public Users findUserByToken(String authorizationHeader) {
 
-        System.out.println("authorizationHeader = " + authorizationHeader);
-
         String token = authorizationHeader.substring("Bearer ".length());
         SocialLoginDecodeResponseDto userinfo = decodeToken(token);
         Users getUser = findUserBySocial_id(userinfo.getSocial_id());
-        System.out.println("getUser = " + getUser);
 
         return getUser;
     }

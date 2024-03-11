@@ -11,6 +11,8 @@ public enum Error {
     // Default
     ERROR(HttpStatus.BAD_REQUEST, "Request processing failed"),
 
+    // 401
+
 
 
     //403 Forbidden
@@ -18,6 +20,7 @@ public enum Error {
 
 
     // 404 NOT FOUND
+    ACCESS_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "액세스 토큰 정보를 찾을 수 없습니다."),
     REFRESH_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "리프레시 토큰 정보를 찾을 수 없습니다."),
     USERS_NOT_FOUND(HttpStatus.NOT_FOUND, "유저 정보를 찾을 수 없습니다."),
     FRIEND_NICKNAME_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 닉네임의 회원을 찾을 수 없습니다."),
