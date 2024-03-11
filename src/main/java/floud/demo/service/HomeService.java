@@ -34,7 +34,7 @@ public class HomeService {
         //어제 회고 조회
         Boolean isYesterdayMemoir = Boolean.FALSE;
         String yesterday_try = "";
-        Optional<Memoir> yesterdayMemoir = memoirRepository.findByCreatedAt(users.getId(), date.minusDays(1));
+        Optional<Memoir> yesterdayMemoir = memoirRepository.findByCreatedAt(users.getId(), LocalDate.now().minusDays(1));
         if(yesterdayMemoir.isPresent()){
             isYesterdayMemoir = Boolean.TRUE;
             yesterday_try = yesterdayMemoir.get().getTry_memoir();
