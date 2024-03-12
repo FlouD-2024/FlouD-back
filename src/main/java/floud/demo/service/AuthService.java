@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import floud.demo.common.exception.ApiException;
 import floud.demo.common.response.ApiResponse;
 import floud.demo.common.response.Error;
 import floud.demo.common.response.Success;
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -87,7 +89,7 @@ public class AuthService {
      * 구글 로그인시 id_token 발급하는 메소드
      */
 
-    public ApiResponse<?> getGoogleAccessToken(String code) {
+    public RedirectView getGoogleAccessToken(String code) {
         RestTemplate restTemplate = new RestTemplate();
         Map<String, String> params = new HashMap<>();
 
@@ -114,16 +116,25 @@ public class AuthService {
                 // 정책에 따라 refresh token이 발급되는 경우에면 저장함
                 saveRefreshToken(userInfo.getUsers_id(),refreshToken);
 
-                return ApiResponse.success(Success.GET_GOOGLE_ACCESS_TOKEN_SUCCESS, TokenResponseDto.builder()
-                        .id_token(id_token)
-                        .refresh_token(refreshToken)
-                        .build());
+                String redirectUrl = "http://localhost:3000/redirect";
+                redirectUrl += "?access_token=" + id_token + "&refresh_token=" + refreshToken;
+
+                // RedirectView를 사용하여 리다이렉션 수행
+                RedirectView redirectView = new RedirectView();
+                redirectView.setUrl(redirectUrl);
+
+                return redirectView;
+
+//                return ApiResponse.success(Success.GET_GOOGLE_ACCESS_TOKEN_SUCCESS, TokenResponseDto.builder()
+//                        .id_token(id_token)
+//                        .refresh_token(refreshToken)
+//                        .build());
             } else {
-                return ApiResponse.failure(Error.ACCESS_TOKEN_NOT_FOUND);
+                return null;
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return ApiResponse.failure(e);
+            throw new IllegalArgumentException();
         }
     }
 
