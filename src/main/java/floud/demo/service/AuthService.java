@@ -178,7 +178,6 @@ public class AuthService {
                 String id_token = tokenResponseDto.getId_token();
                 String refreshToken = tokenResponseDto.getRefresh_token();
 
-                // redis에 refresh token을 저장함
                 UsersResponseDto userInfo = getUserInfo(id_token);
                 saveRefreshToken(userInfo.getUsers_id(),refreshToken);
 
