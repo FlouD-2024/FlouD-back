@@ -22,7 +22,7 @@ public class AuthController {
     private final AuthService authService;
 
     @GetMapping("/callback/google")
-    public ApiResponse<?> successGoogleLogin(@RequestParam("code") String code) {
+    public RedirectView successGoogleLogin(@RequestParam("code") String code) {
         return authService.getGoogleAccessToken(code);
     }
 
@@ -39,6 +39,22 @@ public class AuthController {
     @GetMapping("/kakao/login")
     public RedirectView redirectToKakao() {
         return authService.redirectToKakao();
+    }
+
+    @GetMapping("/redirect")
+    public RedirectView redirectWithTokens(@RequestParam("access_token") String accessToken,
+                                           @RequestParam("refresh_token") String refreshToken) {
+        // 프론트엔드로 전달할 URL
+        String redirectUrl = "http://localhost:3000/redirect";
+
+        // 파라미터 추가
+        redirectUrl += "?access_token=" + accessToken + "&refresh_token=" + refreshToken;
+
+        // RedirectView를 사용하여 리다이렉션 URL 생성
+        RedirectView redirectView = new RedirectView();
+        redirectView.setUrl(redirectUrl);
+
+        return redirectView;
     }
 
     @GetMapping("/decode")
