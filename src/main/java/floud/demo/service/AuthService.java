@@ -153,7 +153,7 @@ public class AuthService {
      * 카카오 로그인시 id_token 발급하는 메소드
      */
 
-    public ApiResponse<?> getKakaoAccessToken(String code) {
+    public RedirectView getKakaoAccessToken(String code) {
         RestTemplate restTemplate = new RestTemplate();
 
         HttpHeaders headers = new HttpHeaders();
@@ -182,16 +182,25 @@ public class AuthService {
                 UsersResponseDto userInfo = getUserInfo(id_token);
                 saveRefreshToken(userInfo.getUsers_id(),refreshToken);
 
-                return ApiResponse.success(Success.GET_KAKAO_ACCESS_TOKEN_SUCCESS, TokenResponseDto.builder()
-                        .id_token(id_token)
-                        .refresh_token(refreshToken)
-                        .build());
+                String redirectUrl = "http://localhost:3000/redirect";
+                redirectUrl += "?access_token=" + id_token + "&refresh_token=" + refreshToken;
+
+                // RedirectView를 사용하여 리다이렉션 수행
+                RedirectView redirectView = new RedirectView();
+                redirectView.setUrl(redirectUrl);
+
+                return redirectView;
+
+//                return ApiResponse.success(Success.GET_KAKAO_ACCESS_TOKEN_SUCCESS, TokenResponseDto.builder()
+//                        .id_token(id_token)
+//                        .refresh_token(refreshToken)
+//                        .build());
             } else {
-                return ApiResponse.failure(Error.ACCESS_TOKEN_NOT_FOUND);
+                return null;
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return ApiResponse.failure(e);
+            throw new IllegalArgumentException();
         }
     }
 

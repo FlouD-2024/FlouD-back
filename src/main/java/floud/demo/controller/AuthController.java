@@ -30,15 +30,15 @@ public class AuthController {
     public RedirectView redirectToGoogle() {
         return authService.redirectToGoogle();
     }
-
-    @GetMapping("/callback/kakao")
-    public ApiResponse<?> successKakaooLogin(@RequestParam("code") String code) {
-        return authService.getKakaoAccessToken(code);
-    }
-
     @GetMapping("/kakao/login")
     public RedirectView redirectToKakao() {
         return authService.redirectToKakao();
+    }
+
+
+    @GetMapping("/callback/kakao")
+    public RedirectView successKakaooLogin(@RequestParam("code") String code) {
+        return authService.getKakaoAccessToken(code);
     }
 
     @GetMapping("/redirect")
