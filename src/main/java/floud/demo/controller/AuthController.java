@@ -35,7 +35,6 @@ public class AuthController {
         return authService.redirectToKakao();
     }
 
-
     @GetMapping("/callback/kakao")
     public RedirectView successKakaooLogin(@RequestParam("code") String code) {
         return authService.getKakaoAccessToken(code);
