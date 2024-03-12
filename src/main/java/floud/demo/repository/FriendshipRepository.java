@@ -14,12 +14,11 @@ public interface FriendshipRepository extends JpaRepository<Friendship, Long> {
     @Query(value = "SELECT * FROM friendship f " +
             "WHERE f.friendship_status = 'ACCEPT' " +
             "AND (f.to_user = :users_id OR f.from_user = :users_id)", nativeQuery = true)
-    List<Friendship> findAllByUsersId(Long users_id);
-
+    Page<Friendship> findAllByUsersIdAndPage(Pageable pageable, Long users_id);
     @Query(value = "SELECT * FROM friendship f " +
             "WHERE f.friendship_status = 'ACCEPT' " +
             "AND (f.to_user = :users_id OR f.from_user = :users_id)", nativeQuery = true)
-    Page<Friendship> findAllByUsersIdAndPage(Pageable pageable, Long users_id);
+    List<Friendship> findAllByUsersId( Long users_id);
 
     //현재 친구 관계가 있는 지 확인
     @Query(value = "SELECT * FROM friendship f " +

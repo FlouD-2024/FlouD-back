@@ -108,12 +108,12 @@ public class MyPageService {
      * 친구 관리
      **/
     @Transactional
-    public ApiResponse<?> getFriendList(String authorizationHeader){
+    public ApiResponse<?> getFriendList(String authorizationHeader, Pageable pageable){
         //Get user
         Users users = authService.findUserByToken(authorizationHeader);
 
         //Find Friend List
-        MypageFriendListResponseDto responseDto = findFriends(users);
+        MypageFriendListResponseDto responseDto = findFriends(pageable, users);
 
         return ApiResponse.success(Success.GET_FRIEND_LIST_SUCCESS,responseDto);
     }
@@ -168,9 +168,9 @@ public class MyPageService {
                         .build()).toList();
     }
 
-    private MypageFriendListResponseDto findFriends(Users me){
+    private MypageFriendListResponseDto findFriends(Pageable pageable, Users me){
         List<Friendship> waitingFriends = friendshipRepository.findAllByWaitingToUser(me.getId());
-        List<Friendship> acceptedFriends = friendshipRepository.findAllByUsersId(me.getId());
+        Page<Friendship> acceptedFriends = friendshipRepository.findAllByUsersIdAndPage(pageable, me.getId());
 
         List<MyWaiting> myWaitingList = waitingFriends.stream()
                 .map(friendship -> buildMyWaiting(friendship, me))
@@ -183,6 +183,7 @@ public class MyPageService {
         return MypageFriendListResponseDto.builder()
                 .waitingList(myWaitingList)
                 .myFriendList(myFriendList)
+                .frinedPageInfo(setFriendPageInfo(acceptedFriends))
                 .build();
     }
 
@@ -221,6 +222,15 @@ public class MyPageService {
                 .nowPage(postPage.getNumber())
                 .totalPages(postPage.getTotalPages())
                 .totalElements(postPage.getTotalElements())
+                .build();
+    }
+
+    private PageInfo setFriendPageInfo(Page<Friendship> friendshipPage){
+        return PageInfo.builder()
+                .last(!friendshipPage.hasNext())
+                .nowPage(friendshipPage.getNumber())
+                .totalPages(friendshipPage.getTotalPages())
+                .totalElements(friendshipPage.getTotalElements())
                 .build();
     }
 

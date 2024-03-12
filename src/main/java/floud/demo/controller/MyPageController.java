@@ -37,8 +37,9 @@ public class MyPageController {
     }
 
     @GetMapping("/friend")
-    public ApiResponse<?> getFriendList(@RequestHeader(value="Authorization") String authorizationHeader){
-        return myPageService.getFriendList(authorizationHeader);
+    public ApiResponse<?> getFriendList(@RequestHeader(value="Authorization") String authorizationHeader,
+                                        @PageableDefault(size = 8) Pageable pageable){
+        return myPageService.getFriendList(authorizationHeader, pageable);
     }
 
 }
