@@ -146,6 +146,7 @@ public class AuthService {
                 "&response_type=code" +
                 "&redirect_uri=" + KAKAO_REDIRECT_URI +
                 "&scope=" + kakaoScope;
+        System.out.println("KAKAO_REDIRECT_URI = " + KAKAO_REDIRECT_URI);
         return new RedirectView(url);
     }
 
