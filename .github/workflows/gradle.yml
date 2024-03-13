@@ -62,11 +62,11 @@ jobs:
           sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
           sudo chmod +x /usr/local/bin/docker-compose
 
-      - name: Stop container if running
-        run: |
-          if docker ps | grep floud; then
-            docker-compose down
-          fi
+      - name: Pull latest images
+        run: sudo docker-compose pull
+
+      - name: Stop all containers
+        run: sudo docker-compose down
 
       - name: Docker 데몬 상태 확인
         run: sudo systemctl status docker
@@ -76,3 +76,5 @@ jobs:
 
       - name: Start Docker Compose
         run: sudo docker-compose up -d
+    
+
