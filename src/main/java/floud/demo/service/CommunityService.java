@@ -74,7 +74,7 @@ public class CommunityService {
         //Create Community Post
         Community newCommunity = communityRepository.save(requestDto.toEntity(users));
 
-        return ApiResponse.success(Success.CREATE_COMMUNITY_POST_SUCCESS, setResponseDto(newCommunity));
+        return ApiResponse.success(Success.CREATE_COMMUNITY_POST_SUCCESS, setResponseDto(newCommunity, users.getNickname()));
     }
 
     @Transactional
@@ -91,7 +91,7 @@ public class CommunityService {
         community.update(requestDto.getTitle(), requestDto.getContent());
         communityRepository.flush();
 
-        return ApiResponse.success(Success.UPDATE_COMMUNITY_POST_SUCCESS, setResponseDto(community));
+        return ApiResponse.success(Success.UPDATE_COMMUNITY_POST_SUCCESS, setResponseDto(community, users.getNickname()));
     }
 
     @Transactional
@@ -136,10 +136,10 @@ public class CommunityService {
     }
 
 
-    private PostResponseDto setResponseDto(Community community){
+    private PostResponseDto setResponseDto(Community community, String nickname){
         return PostResponseDto.builder()
                 .community_id(community.getId())
-                .nickname(community.getUsers().getNickname())
+                .nickname(nickname)
                 .title(community.getTitle())
                 .content(community.getContent())
                 .written_at(community.getCreated_at())
