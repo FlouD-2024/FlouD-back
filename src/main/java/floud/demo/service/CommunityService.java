@@ -86,7 +86,7 @@ public class CommunityService {
         Community community = communityRepository.findById(requestDto.getCommunity_id()).orElseThrow(() -> new NotFoundException("해당 게시글을 찾을 수 없습니다."){});
 
         if(!checkMyPost(users, community))
-            ApiResponse.failure(Error.NO_PERMISSION_TO_POST);
+            return ApiResponse.failure(Error.NO_PERMISSION_TO_POST);
 
         community.update(requestDto.getTitle(), requestDto.getContent());
         communityRepository.flush();
@@ -103,7 +103,7 @@ public class CommunityService {
         Community community = communityRepository.findById(community_id).orElseThrow(() -> new NotFoundException("해당 게시글을 찾을 수 없습니다."){});
 
         if(!checkMyPost(users, community))
-            ApiResponse.failure(Error.NO_PERMISSION_TO_POST);
+            return ApiResponse.failure(Error.NO_PERMISSION_TO_POST);
 
         communityRepository.delete(community);
 
@@ -111,7 +111,7 @@ public class CommunityService {
     }
 
 
-    private Boolean checkMyPost(Users users, Community community){
+    private boolean checkMyPost(Users users, Community community){
         return users.equals(community.getUsers());
     }
 
