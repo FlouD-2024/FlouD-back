@@ -64,6 +64,9 @@ public class MemoirService {
             return ApiResponse.failure(Error.MEMOIR_NOT_FOUND);
         Memoir memoir = optionalMemoir.get();
 
+        if(!checkMyMemoir(users, memoir))
+            return ApiResponse.failure(Error.NO_PERMISSION_TO_MEMOIR);
+
         //Update Memoir
         memoir.update(memoirUpdateRequestDto);
 
@@ -123,6 +126,10 @@ public class MemoirService {
 
         return  ApiResponse.success(Success.GET_MULTIPLE_MEMOIR_SUCCESS, responseDto);
 
+    }
+
+    private boolean checkMyMemoir(Users users, Memoir memoir){
+        return  users.equals(memoir.getUsers());
     }
 
     private void createAlarm(Users user){
