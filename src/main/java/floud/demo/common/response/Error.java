@@ -17,6 +17,7 @@ public enum Error {
 
     //403 Forbidden
     NO_PERMISSION_TO_POST(HttpStatus.FORBIDDEN, "게시글을 수정하거나 삭제할 권한이 없습니다."),
+    NO_PERMISSION_TO_MEMOIR(HttpStatus.FORBIDDEN, "본인의 회고가 아니기 때문에 수정할 권한이 없습니다."),
 
 
     // 404 NOT FOUND
