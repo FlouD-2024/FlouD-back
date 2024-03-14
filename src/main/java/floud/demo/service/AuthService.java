@@ -116,7 +116,9 @@ public class AuthService {
                 System.out.println("userInfo = " + userInfo.getUsers_id());
 
                 // 정책에 따라 refresh token이 발급되는 경우에면 저장함
-                saveRefreshToken(userInfo.getUsers_id(),refreshToken);
+                if (refreshToken != null && userInfo.getUsers_id() != null) {
+                    saveRefreshToken(userInfo.getUsers_id(), refreshToken);
+                }
 
                 String redirectUrl = "http://localhost:3000/redirect";
                 redirectUrl += "?access_token=" + id_token + "&refresh_token=" + refreshToken;
@@ -126,11 +128,6 @@ public class AuthService {
                 redirectView.setUrl(redirectUrl);
 
                 return redirectView;
-
-//                return ApiResponse.success(Success.GET_GOOGLE_ACCESS_TOKEN_SUCCESS, TokenResponseDto.builder()
-//                        .id_token(id_token)
-//                        .refresh_token(refreshToken)
-//                        .build());
             } else {
                 log.error("Failed to acquire Google access token. Status code: {}", responseEntity.getStatusCode());
                 throw new Exception("Failed to acquire Google access token.");
