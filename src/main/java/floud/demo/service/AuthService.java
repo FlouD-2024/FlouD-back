@@ -121,7 +121,7 @@ public class AuthService {
                 }
 
                 String redirectUrl = "http://localhost:3000/redirect";
-                redirectUrl += "?access_token=" + id_token + "&refresh_token=" + refreshToken;
+                redirectUrl += "?access_token=" + id_token + "&refresh_token=" + refreshToken+ "&social_type=1";
 
                 // RedirectView를 사용하여 리다이렉션 수행
                 RedirectView redirectView = new RedirectView();
@@ -183,18 +183,13 @@ public class AuthService {
                 saveRefreshToken(userInfo.getUsers_id(),refreshToken);
 
                 String redirectUrl = "http://localhost:3000/redirect";
-                redirectUrl += "?access_token=" + id_token + "&refresh_token=" + refreshToken;
+                redirectUrl += "?access_token=" + id_token + "&refresh_token=" + refreshToken + "&social_type=2";
 
                 // RedirectView를 사용하여 리다이렉션 수행
                 RedirectView redirectView = new RedirectView();
                 redirectView.setUrl(redirectUrl);
 
                 return redirectView;
-
-//                return ApiResponse.success(Success.GET_KAKAO_ACCESS_TOKEN_SUCCESS, TokenResponseDto.builder()
-//                        .id_token(id_token)
-//                        .refresh_token(refreshToken)
-//                        .build());
             } else {
                 return null;
             }
