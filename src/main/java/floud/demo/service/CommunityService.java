@@ -74,7 +74,7 @@ public class CommunityService {
         //Create Community Post
         Community newCommunity = communityRepository.save(requestDto.toEntity(users));
 
-        return ApiResponse.success(Success.CREATE_COMMUNITY_POST_SUCCESS, setResponseDto(newCommunity, users.getNickname()));
+        return ApiResponse.success(Success.CREATE_COMMUNITY_POST_SUCCESS, setResponseDto(newCommunity));
     }
 
     @Transactional
@@ -91,7 +91,7 @@ public class CommunityService {
         community.update(requestDto.getTitle(), requestDto.getContent());
         communityRepository.flush();
 
-        return ApiResponse.success(Success.UPDATE_COMMUNITY_POST_SUCCESS, setResponseDto(community, users.getNickname()));
+        return ApiResponse.success(Success.UPDATE_COMMUNITY_POST_SUCCESS, setResponseDto(community));
     }
 
     @Transactional
@@ -103,7 +103,7 @@ public class CommunityService {
         Community community = communityRepository.findById(community_id).orElseThrow(() -> new NotFoundException("해당 게시글을 찾을 수 없습니다."){});
 
         if(!checkMyPost(users, community))
-            ApiResponse.failure(Error.NO_PERMISSION_TO_POST);
+            return ApiResponse.failure(Error.NO_PERMISSION_TO_POST);
 
         communityRepository.delete(community);
 
@@ -136,10 +136,10 @@ public class CommunityService {
     }
 
 
-    private PostResponseDto setResponseDto(Community community, String nickname){
+    private PostResponseDto setResponseDto(Community community){
         return PostResponseDto.builder()
                 .community_id(community.getId())
-                .nickname(nickname)
+                .nickname(community.getUsers().getNickname())
                 .title(community.getTitle())
                 .content(community.getContent())
                 .written_at(community.getCreated_at())
