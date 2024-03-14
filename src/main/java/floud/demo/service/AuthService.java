@@ -16,6 +16,7 @@ import floud.demo.dto.auth.UsersResponseDto;
 import floud.demo.repository.UsersRepository;
 import io.jsonwebtoken.io.Decoders;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -38,6 +39,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthService {
 
     @Autowired
@@ -130,7 +132,8 @@ public class AuthService {
 //                        .refresh_token(refreshToken)
 //                        .build());
             } else {
-                return null;
+                log.error("Failed to acquire Google access token. Status code: {}", responseEntity.getStatusCode());
+                throw new Exception("Failed to acquire Google access token.");
             }
         } catch (Exception e) {
             e.printStackTrace();
