@@ -29,7 +29,6 @@ public class MyPageService {
     private final UsersRepository usersRepository;
     private final GoalRepository goalRepository;
     private final FriendshipRepository friendshipRepository;
-    private final AlarmRepository alarmRepository;
     private final CommunityRepository communityRepository;
 
 
@@ -183,7 +182,7 @@ public class MyPageService {
         return MypageFriendListResponseDto.builder()
                 .waitingList(myWaitingList)
                 .myFriendList(myFriendList)
-                .frinedPageInfo(setFriendPageInfo(acceptedFriends))
+                .pageInfo(setFriendPageInfo(acceptedFriends))
                 .build();
     }
 
@@ -220,7 +219,7 @@ public class MyPageService {
         return PageInfo.builder()
                 .last(!postPage.hasNext())
                 .previous(postPage.hasPrevious())
-                .nowPage(postPage.getNumber()+1)
+                .nowPage(postPage.getNumber())
                 .totalPages(postPage.getTotalPages())
                 .totalElements(postPage.getTotalElements())
                 .build();
@@ -229,6 +228,7 @@ public class MyPageService {
     private PageInfo setFriendPageInfo(Page<Friendship> friendshipPage){
         return PageInfo.builder()
                 .last(!friendshipPage.hasNext())
+                .previous(friendshipPage.hasPrevious())
                 .nowPage(friendshipPage.getNumber())
                 .totalPages(friendshipPage.getTotalPages())
                 .totalElements(friendshipPage.getTotalElements())

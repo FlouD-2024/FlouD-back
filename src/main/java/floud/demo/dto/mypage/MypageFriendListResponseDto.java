@@ -13,5 +13,5 @@ import java.util.List;
 public class MypageFriendListResponseDto {
     private List<MyWaiting> waitingList;
     private List<MyFriend> myFriendList;
-    private PageInfo frinedPageInfo;
+    private PageInfo pageInfo;
 }
