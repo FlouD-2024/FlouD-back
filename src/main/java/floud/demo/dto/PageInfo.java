@@ -9,6 +9,6 @@ public class PageInfo {
     private Integer nowPage;
     private Integer totalPages;
     private Long totalElements;
-    private Boolean last;
     private Boolean previous;
+    private Boolean last;
 }
