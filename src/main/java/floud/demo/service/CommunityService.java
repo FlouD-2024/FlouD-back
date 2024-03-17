@@ -126,12 +126,13 @@ public class CommunityService {
                 .toList();
     }
 
-    private PageInfo setPageInfo(Page<Community> postPage){
+    private PageInfo setPageInfo(Page<Community> communityPage){
         return PageInfo.builder()
-                .last(!postPage.hasNext())
-                .nowPage(postPage.getNumber())
-                .totalPages(postPage.getTotalPages())
-                .totalElements(postPage.getTotalElements())
+                .last(!communityPage.hasNext())
+                .previous(communityPage.hasPrevious())
+                .nowPage(communityPage.getNumber())
+                .totalPages(communityPage.getTotalPages())
+                .totalElements(communityPage.getTotalElements())
                 .build();
     }
 

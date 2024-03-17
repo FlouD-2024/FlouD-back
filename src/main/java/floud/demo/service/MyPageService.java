@@ -219,7 +219,8 @@ public class MyPageService {
     private PageInfo setPageInfo(Page<Community> postPage){
         return PageInfo.builder()
                 .last(!postPage.hasNext())
-                .nowPage(postPage.getNumber())
+                .previous(postPage.hasPrevious())
+                .nowPage(postPage.getNumber()+1)
                 .totalPages(postPage.getTotalPages())
                 .totalElements(postPage.getTotalElements())
                 .build();
