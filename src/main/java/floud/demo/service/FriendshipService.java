@@ -216,12 +216,13 @@ public class FriendshipService {
         return myfriendsInfo;
     }
 
-    private PageInfo setPageInfo(Page<Friendship> postPage){
+    private PageInfo setPageInfo(Page<Friendship> friendshipPage){
         return PageInfo.builder()
-                .last(!postPage.hasNext())
-                .nowPage(postPage.getNumber())
-                .totalPages(postPage.getTotalPages())
-                .totalElements(postPage.getTotalElements())
+                .last(!friendshipPage.hasNext())
+                .previous(friendshipPage.hasPrevious())
+                .nowPage(friendshipPage.getNumber())
+                .totalPages(friendshipPage.getTotalPages())
+                .totalElements(friendshipPage.getTotalElements())
                 .build();
     }
 }
