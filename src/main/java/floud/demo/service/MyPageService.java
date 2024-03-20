@@ -52,6 +52,8 @@ public class MyPageService {
 
     @Transactional
     public ApiResponse<?> checkDuplicatedName(String authorizationHeader, String nickname){
+        if(authService.findUserByToken(authorizationHeader).getNickname().equals(nickname))
+            return ApiResponse.success(Success.CHECK_NICKNAME_DUPLICATED, Map.of("isDuplicated", false));
         return ApiResponse.success(Success.CHECK_NICKNAME_DUPLICATED, Map.of("isDuplicated", checkNicknameDuplicated(nickname)));
     }
 
