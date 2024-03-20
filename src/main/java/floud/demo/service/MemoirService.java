@@ -40,6 +40,7 @@ public class MemoirService {
 
         //Check whether user posts today's memoir
         LocalDate now = LocalDate.now();
+        log.debug(now.toString());
         if(memoirRepository.existsByUserAndCreatedAtBetween(users.getId(), now))
             return ApiResponse.failure(Error.MEMOIR_ALREADY_EXIST);
 
