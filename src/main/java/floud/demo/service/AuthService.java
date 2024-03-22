@@ -121,7 +121,7 @@ public class AuthService {
                 }
 
                 String redirectUrl = "http://localhost:3000/redirect";
-                redirectUrl += "?access_token=" + id_token + "&refresh_token=" + refreshToken+ "&social_type=1";
+                redirectUrl += "?access_token=" + id_token + "&refresh_token=" + refreshToken;
 
                 // RedirectView를 사용하여 리다이렉션 수행
                 RedirectView redirectView = new RedirectView();
@@ -183,7 +183,7 @@ public class AuthService {
                 saveRefreshToken(userInfo.getUsers_id(),refreshToken);
 
                 String redirectUrl = "http://localhost:3000/redirect";
-                redirectUrl += "?access_token=" + id_token + "&refresh_token=" + refreshToken + "&social_type=2";
+                redirectUrl += "?access_token=" + id_token + "&refresh_token=" + refreshToken;
 
                 // RedirectView를 사용하여 리다이렉션 수행
                 RedirectView redirectView = new RedirectView();
