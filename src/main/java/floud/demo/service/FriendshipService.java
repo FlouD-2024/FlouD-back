@@ -104,7 +104,7 @@ public class FriendshipService {
         friendshipRepository.save(newFriendship);
 
         //Create Alarm
-        createAlarm(users, friend);
+        createAlarm(users, friend,"새로운 친구 신청이 왔습니다.");
 
         return ApiResponse.success(Success.REQUEST_FRIEND_SUCCESS, Map.of("friendship_id", newFriendship.getId()));
     }
@@ -151,7 +151,8 @@ public class FriendshipService {
         friendship.updateStatus(requestDto.getFriendshipStatus());
 
         //Create Alarm
-        createAlarm(friendship.getFrom_user(), users);
+        if(requestDto.getFriendshipStatus().equals(FriendshipStatus.ACCEPT))
+            createAlarm(users, friendship.getFrom_user(), "친구 신청이 수락 되었습니다. ");
 
         return ApiResponse.success(Success.UPDATE_FRIEND_SUCCESS, Map.of("nowStatus", friendship.getFriendshipStatus()));
     }
@@ -185,8 +186,7 @@ public class FriendshipService {
 
     }
 
-    private void createAlarm(Users from_user, Users to_user){
-        String message = "친구 신청이 왔습니다.";
+    private void createAlarm(Users from_user, Users to_user, String message){
         alarmRepository.save(new Alarm(to_user, from_user.getNickname(), AlarmType.FRIEND, message));
     }
 
